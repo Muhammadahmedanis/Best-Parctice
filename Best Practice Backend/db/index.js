@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
-import 'dotenv/config';
 
-const url = `mongodb+srv:${ process.env.DB_NAME }:${ process.env.DB_PASSWORD }@cluster0.tvtr7.mongodb.net/${ process.env.DB_NAME }`;
-
-mongoose.connect(url);
-
-export default mongoose;
+export const connectDB = async () => {
+    try {
+        const dbConnecttion = await mongoose.connect(process.env.MONGO_URI);
+        console.log("MongoDB Connected");
+    } catch (error) {
+        console.log(error);
+    }
+}
