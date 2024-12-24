@@ -3,19 +3,26 @@ import 'dotenv/config';
 
 export const tokenVerify = (req, res, next) => {
     try {
-        if(req.headers?.authorization){
-            const token = req.headers.authorization.split(" ")[1];
-            const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
-            if (verifyToken) {
-                next()
-            }else{
-                res.status(403).status({status: 403, message: "token unauthorized"});
-            }
-            console.log(token);
-        }else{
-            res.status(403).send({status:402, message:"Token not found"});
+        // Check for token in Authorization header
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(403).send({ status: 403, message: "Token not found" });
         }
+        // Extract token from "Bearer <token>"
+        // const token = req.headers.authorization;
+        // console.log(token);
+        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Attach decoded data to req object
+        req.user = {
+            email: decoded.email,
+            isAdmin: decoded.isAdmin || false,
+        };
+
+        next(); // Proceed to the next middleware
     } catch (error) {
-            res.status(500).send({status: 500, error});        
+        const status = error.name === "JsonWebTokenError" ? 401 : 500;
+        res.status(status).send({ status, message: error.message });
     }
-}
+};
