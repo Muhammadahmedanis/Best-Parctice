@@ -5,6 +5,23 @@ export const connectDB = async () => {
         const dbConnecttion = await mongoose.connect(process.env.MONGO_URI);
         console.log("MongoDB Connected");
     } catch (error) {
-        console.log(error);
+        console.error("Error connecting to MongoDB:", error.message);
+
+        // Only attempt to close the connection if it was established
+        if (mongoose.connection.readyState !== 0) {
+            await mongoose.connection.close();
+            console.log("MongoDB Connection Closed");
+        }
+        process.exit(1); // Exit the process on failure
     }
-}
+};
+
+// Gracefully handle application termination
+process.on('SIGINT', async () => {
+    console.log("Application is terminating...");
+    if (mongoose.connection.readyState !== 0) {
+        await mongoose.connection.close();
+        console.log("MongoDB Connection Closed");
+    }
+    process.exit(0);
+});

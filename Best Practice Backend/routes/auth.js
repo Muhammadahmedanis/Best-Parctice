@@ -6,6 +6,6 @@ import { tokenVerify } from '../config/tokenVerify.js';
 
 authRouter.post('/signup', signUp);
 authRouter.post('/signin', signIn);
-authRouter.get('/users', tokenVerify, getUsers);
+authRouter.get('/users', tokenVerify, getUsers); // header tokrn bhjna ha postman se
 
 export default authRouter;

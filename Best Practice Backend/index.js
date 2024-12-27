@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import { connectDB } from './db/index.js';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import { ENV } from './constant/index.js';
 
 const app = express();
 app.use(express.json());
@@ -14,7 +15,7 @@ connectDB();
 
 app.use("/api/v1/auth", authRouter);
 
-const PORT = process.env.PORT || 3000;
+const PORT = ENV.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log("Server working");
