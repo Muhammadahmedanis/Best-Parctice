@@ -1,7 +1,9 @@
 import express from 'express';
-import authRouter from './routes/auth.js';
+// import authRouter from './routes/auth.js';
+import authRouter from './src/auth/routes.js';
 import dotenv from 'dotenv'
-import { connectDB } from './db/index.js';
+// import { connectDB } from './db/index.js';
+import { connectDB } from './src/auth/db.js';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { ENV } from './constant/index.js';
@@ -13,7 +15,13 @@ app.use(helmet()); // use to secure out header like in our network tab we can x-
 dotenv.config();
 connectDB();
 
-app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/auth" , authRouter);
+app.all("*", (req, res) => {
+    res.status(404).json({
+        status: 'fail',
+        message: `Can't find ${req.originalUrl} on this server!`
+    })
+})
 
 const PORT = ENV.PORT || 3000;
 

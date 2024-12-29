@@ -17,7 +17,7 @@ export const signUp = async(req, res) => {
     email = email.toLowerCase();
     try {
         let check = await Users.findOne({ email: email });
-        if (!check) {
+        if (!check) {  // if user not exist
             if (password.length >= 8) {
                 const hashedPassword = bcrypt.hashSync(password, 10); // Use a different variable
                 const user = await Users.create({
