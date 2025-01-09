@@ -24,7 +24,7 @@ function Signup() {
     }
     if (!password) {
       toast.error("Password is required")
-    } else if (password.length < 6) {
+    } else if (password.length < 7) {
       toast.error("Password must be at least 8 characters")
     }
 
@@ -34,23 +34,20 @@ function Signup() {
     // }
 
     // API Call
-    const data = { userName, email, password };
-    if (data.userName.length && data.email.length && data.password.length) {
-      try {
-          const response = await axios.post("/api/v1/auth/signup", data);
-          toast.success("Signup successfully");
-          console.log(response);
-          navigate("/otp")
-          return { ...previousState, errors: null }; // Clear errors on success
-        } catch (error) {
-          toast.error("Signup failed");
-          return { ...previousState, errors: { apiError: error.message } };
-        }
+  const data = { userName, email, password };
+  if (data.userName.length && data.email.length && data.password.length) {
+    try {
+        const response = await axios.post("/api/v1/auth/signup", data);
+        toast.success("Signup successfully");
+        console.log(response);
+        navigate("/otp")
+        return { ...previousState, errors: null }; // Clear errors on success
+      } catch (error) {
+        toast.error(error.response?.data.message);
+        return { ...previousState, errors: { apiError: error.message } };
       }
     }
-);
-
-  // !isPending && <Link to='/otp' />
+});
 
   // const { errors } = formState || {};
 

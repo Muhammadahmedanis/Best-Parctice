@@ -23,11 +23,10 @@ export const tokenVerify = (req, res, next) => {
     try {
         // Check for token in Authorization header & Extract token from "Bearer <token>"
             const { authorization } = req.headers
-            console.log(authorization);
+            // console.log(authorization);
             if ( authorization && authorization.startsWith('Bearer')) {
             // Verify Token
             const token = authorization.split(" ")[1];
-            console.log(token);
             const { data } = verify(token, process.env.JWT_SECRET_KEY);
             req.user = data;
             next(); // Proceed to the next middleware

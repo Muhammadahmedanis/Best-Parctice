@@ -40,6 +40,7 @@ export const responseMessages = {
     
     SUCCESS_REGISTRATION: 'User Registartion Successful',
     SUCCESS_LOGIN: 'User Login Successful',
+    SUCCESS_LOGOUT: 'Logout Successful',
     SUCCESS_DEACTIVATE: 'User Deactivation Successful',
     SUCCESS_ACTIVATE: 'User Activation Successful',
     SUCCESS_CATEGORY: 'Category Added Successful',

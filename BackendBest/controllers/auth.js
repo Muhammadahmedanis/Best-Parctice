@@ -8,13 +8,13 @@ import { OK, CREATED, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND, METHOD_NO
 import { sendError, sendSuccess } from '../utils/responses.js';
 import { responseMessages } from '../constant/responseMessages.js';
 import { generateToken } from '../helpers/token.js';
-const { MISSING_FIELDS, USER_NAME_EXISTS, UN_AUTHORIZED, SUCCESS_REGISTRATION, NO_USER, SUCCESS_LOGIN, INVALID_OTP, OTP_EXPIRED, EMAIL_VERIFY } = responseMessages
+const { MISSING_FIELDS, USER_NAME_EXISTS, UN_AUTHORIZED, SUCCESS_REGISTRATION, NO_USER, SUCCESS_LOGIN, INVALID_OTP, OTP_EXPIRED, EMAIL_VERIFY, SUCCESS_LOGOUT } = responseMessages
 import { v4 as uuidv4 } from 'uuid'
 import { sendEmailOTP } from '../helpers/sendEmail.js';
 
 
 // @desc    SIGNUP
-// @route   POST /signup
+// @route   POST /api/v1/auth/signup
 // @access  Public
 
 export const signUp = async (req, res) => {
@@ -63,7 +63,7 @@ export const signUp = async (req, res) => {
 
 
 // @desc    VERIFY EMAIL
-// @route   POST api/auth/verifyEmail
+// @route   POST /api/auth/verifyEmail
 // @access  Private
 
 export const verifyEmail = async (req, res) => {
@@ -94,8 +94,8 @@ export const verifyEmail = async (req, res) => {
 }
 
 
-// @desc    LOGIN
-// @route   POST /login
+// @desc    SIGNIN
+// @route   POST /api/v1/auth/signin
 // @access  Public
 
 export const signIn = async (req, res) => {
@@ -133,8 +133,27 @@ export const signIn = async (req, res) => {
 
 
 
-// @desc    resetPasswordEmail
-// @route   GET api/auth/resetPasswordEmail
+// @desc    LOGOUT
+// @route   POST api/v1/auth/logout
+// @access  Public
+
+export const logout = async(req, res) => {
+    try {
+        res.clearCookie("token", {
+            path: "/",
+            httpOnly: true,
+            secure: true,
+        })
+        res.status(OK).send(sendSuccess({status: true, message: SUCCESS_LOGOUT}));
+    } catch (error) {
+        return res.status(INTERNAL_SERVER_ERROR).send(sendError({status: false, error}));
+    }
+}
+
+
+
+// @desc    RESET-PASSWORD-EMAIL
+// @route   GET api/v1/auth/resetPasswordEmail
 // @access  Public
 
 export const resetPasswordEmail = (req, res) => {

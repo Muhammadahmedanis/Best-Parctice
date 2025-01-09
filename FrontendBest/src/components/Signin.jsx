@@ -1,10 +1,39 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import React, { useActionState, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import { FaRegEnvelope } from "react-icons/fa6";
 import { LuEye } from "react-icons/lu";
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 function Signin() {
-  const[disable, setDisable] = useState(false);
+  const navigate = useNavigate();
+   const[user, submitAction, isPending] = useActionState(async (previousState, formData) => {
+    const email = formData.get("email");
+    const password = formData.get("password");
+    
+    if(!email) {
+       toast.error("email required")
+    }else if(!/\S+@\S+\.\S+/.test(email)){
+      toast.error("Invalid email format")
+    }
+    if (!password) {
+      toast.error("Password is required")
+    } else if (password.length < 7) {
+      toast.error("Password must be at least 8 characters")
+    }
+    const userData = { email, password };
+    if (userData.email.length && userData.password.length) {
+      try {
+        const response = await axios.post("/api/v1/auth/signin", userData)
+        toast.success(response?.data.message);
+        console.log("Sign in successfull");
+        navigate("/");
+      } catch (error) {
+        toast.error(error.response?.data.message);
+      }
+    }
+   }) 
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl">
@@ -21,9 +50,8 @@ function Signin() {
               src="https://merakiui.com/images/logo.svg"
               alt="" />
           </div>
-
           <p className="mt-3 text-xl text-center text-gray-600 dark:text-gray-200">Welcome back!</p>
-
+          <form action={submitAction}>
           <div className='my-4'>
             <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
                 htmlFor="LoggingEmailAddress" >
@@ -33,7 +61,7 @@ function Signin() {
               <span className="absolute right-1">
                 <FaRegEnvelope className="w-5 h-5 mx-3 text-gray-300 dark:text-gray-500"  />
               </span>
-              <input type="email" className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="abc@gmail.com" />
+              <input type="email" name='email' className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="abc@gmail.com" />
             </div>
           </div>
 
@@ -43,24 +71,25 @@ function Signin() {
                 htmlFor="LoggingEmailAddress" >
                 Password
             </label>
-            <a href="#" className="text-xs text-gray-500 dark:text-gray-300 hover:underline">
-                Forget Password?
-              </a>
+            <Link to="/forgotPass" className="text-xs text-gray-500 dark:text-gray-300 hover:underline">
+              Forget Password?
+            </Link>
             </div>
             <div className="relative flex items-center mt-2">
               <span className="absolute right-1">
                 <LuEye className="w-5 h-5 mx-3 cursor-pointer text-gray-300 dark:text-gray-500"  />
               </span>
-              <input type="password" className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="••••••••" />
+              <input type="password" name='password' className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="••••••••" />
             </div>
           </div>
 
           <div className="mt-6">
-            <button className="w-full inline-flex gap-2 items-center justify-center whitespace-nowrap rounded-lg bg-indigo-500 hover:bg-indigo-600 px-3.5 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-950/10  focus:outline-none focus:ring focus:ring-indigo-300 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300 transition-colors duration-150">
+            <button disabled={isPending} className="w-full inline-flex gap-2 items-center justify-center whitespace-nowrap rounded-lg bg-indigo-500 hover:bg-indigo-600 px-3.5 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-950/10  focus:outline-none focus:ring focus:ring-indigo-300 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300 transition-colors duration-150">
               <div className='text-[17px]'> Sign In</div>
-              {/* <div className="w-7 h-7 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> */}
+              { isPending && <div className="w-7 h-7 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> }
             </button>
           </div>
+          </form>
 
           <div className="flex items-center justify-between mt-4">
             <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>

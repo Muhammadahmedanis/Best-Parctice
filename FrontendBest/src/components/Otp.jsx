@@ -5,30 +5,34 @@ import { toast } from 'react-toastify';
 
 const Otp = () => {
     const navigate = useNavigate()
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otpNum, setOtpNum] = useState(["", "", "", "", "", ""]);
   const[disable, setDisable] = useState(false);
 
   const[user, submitAction, isPending] = useActionState(async (previousState, formData) => {
-    const otpNum = otp.join('');
-    console.log(otpNum);
     try {
-        let res = await axios.post("/api/v1/auth/verifyEmail", otpNum);
+      const otp = otpNum.join('');
+      console.log(otp);
+        let res = await axios.post("/api/v1/auth/verifyEmail", {otp} ,  {
+          headers: {
+            Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJOYW1lIjoiQWltYW4iLCJlbWFpbCI6ImF5bWFuYW5pczcyOUBnbWFpbC5jb20iLCJpc0FkbWluIjpmYWxzZSwiaXNWZXJpZmllZCI6ZmFsc2UsIl9pZCI6IjY3N2ZhNDcxZWYwYjg2NjU0YzFjZTg2NSIsIm90cCI6IjRkZWRhNiIsImV4cGlyZXNJbiI6IjIwMjUtMDEtMDlUMTA6MzY6NTcuNzU1WiIsImNyZWF0ZWRBdCI6IjIwMjUtMDEtMDlUMTA6MjY6NTcuNzU3WiIsInVwZGF0ZWRBdCI6IjIwMjUtMDEtMDlUMTA6MjY6NTcuNzU3WiIsIl9fdiI6MH0sImlhdCI6MTczNjQxODQyMH0.UKepT2nztk0A8d0Jj8GiRvG_walrwxCcm_eXg_eeAPc"}` // Set the token in the header
+          }
+        });
         toast.success("OTP verified successfully")
         console.log(res);
         navigate("/signin");
     } catch (error) {
-        toast.error("OTP is invalid")
+        toast.error(error.response?.data.message)
     }
-    setOtp(["", "", "", "","",""])
+    // setOtp(["", "", "", "","",""])
 })
 
   const handleChange = (e, index) => {
     const value = e.target.value;
     // if (/[^0-9]/.test(value)) return; // Only allow numbers
 
-    const newOtp = [...otp];
+    const newOtp = [...otpNum];
     newOtp[index] = value;
-    setOtp(newOtp);
+    setOtpNum(newOtp);
 
     if (value && index < 5) {
       // Move focus to the next input when a digit is entered
@@ -38,7 +42,7 @@ const Otp = () => {
 };
 
 const handleKeyDown = (e, index) => {
-    if (e.key === "Backspace" && otp[index] === "") {
+    if (e.key === "Backspace" && otpNum[index] === "") {
         // Move focus to the previous input when backspace is pressed and the current input is empty
         if (index > 0) {
             document.getElementById(`otp-input-${index - 1}`).focus();
@@ -59,7 +63,7 @@ const handleKeyDown = (e, index) => {
       </header>
       <form action={submitAction} id="otp-form">
         <div className="flex items-center justify-center gap-3">
-          {otp.map((value, index) => (
+          {otpNum.map((value, index) => (
             <input
               key={index}
               id={`otp-input-${index}`}

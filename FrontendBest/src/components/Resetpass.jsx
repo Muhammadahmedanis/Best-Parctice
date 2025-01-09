@@ -16,7 +16,7 @@ const ResetPassword = () => {
                             <form>
                                 <div className="grid gap-y-4">
                                     <div>
-                                        <label htmlFor="new_password" className="block mb-2 ml-1 text-xs font-semibold">
+                                        <label htmlFor="new_password" className="block mb-2 ml-1 text-[17px] font-semibold">
                                             New password
                                         </label>
                                         <div className="relative">
@@ -35,7 +35,7 @@ const ResetPassword = () => {
                                         </p>
                                     </div>
                                     <div>
-                                        <label htmlFor="confirm_new_password" className="block mb-2 ml-1 text-xs font-semibold">
+                                        <label htmlFor="confirm_new_password" className="block mb-2 ml-1 text-[17px] font-semibold">
                                             Confirm new password
                                         </label>
                                         <div className="relative">
