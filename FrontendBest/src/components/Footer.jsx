@@ -47,7 +47,7 @@ const Footer = () => {
                         <div className="flex flex-col items-start mt-5 space-y-2">
                             {
                                 val.title.map((val, ind) => (
-                                    <li key={ind}>{val.subTitle}</li>
+                                    <li className="text-black dark:text-white" key={ind}>{val.subTitle}</li>
                                 ))
                             }
                         </div>

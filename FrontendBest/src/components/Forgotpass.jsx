@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function Forgotpass() {
   return (
@@ -26,9 +27,8 @@ function Forgotpass() {
                                         id="email"
                                         name="email"
                                         className="block w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        required
                                         aria-describedby="confirm-new-password-error"
-                                        placeholder="Confirm your new password"
+                                        placeholder="Confirm your email address"
                                     />
                                 </div>
                                 <p className="hidden mt-2 text-xs text-red-600" id="confirm-new-password-error">
@@ -37,9 +37,14 @@ function Forgotpass() {
                             </div>
                             <button
                                 type="submit"
-                                className="inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white transition-all bg-indigo-500 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
+                                className="inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white transition-all bg-indigo-500 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                 Change my password
+                            </button>
+                            <button
+                                className="inline-flex items-center border-gray-200 justify-center gap-2 px-4 py-3 text-sm font-bold text-gray-700 transition-all  border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                <Link to="/signin">
+                                    Back to Sign in
+                                </Link>
                             </button>
                         </div>
                     </form>

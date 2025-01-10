@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import axios from 'axios'
 import { LuMoveLeft } from "react-icons/lu";
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 function NotFound() {
     const params = useParams();
@@ -32,7 +32,9 @@ function NotFound() {
         <div className="flex items-center w-full mt-6 gap-x-3 shrink-0 sm:w-auto">
           <button className="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700">
           <LuMoveLeft size={20}/>
+          <Link to="/">
             <span>Go back</span>
+          </Link>
           </button>
         </div>
       </div>

@@ -1,5 +1,5 @@
-import React from 'react'
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
+import React, { use, useContext } from 'react'
+import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider, useParams } from 'react-router-dom'
 import Signup from '../components/Signup'
 import Signin from '../components/Signin'
 import Otp from '../components/Otp'
@@ -8,26 +8,28 @@ import Forgotpass from '../components/Forgotpass'
 import Layout from '../layout.jsx/Layout'
 import Home from '../components/Home'
 import NotFound from '../components/NotFound'
-const router = createBrowserRouter(
-  createRoutesFromElements(
+import { AuthContext } from '../context/authContext'
+
+function Routing() {
+  const { user } = use(AuthContext);
+  const isExist = user.user;
+
+  const router = createBrowserRouter(
+    createRoutesFromElements(
       <>
-        <Route path='/signup' element={<Signup />} />
+        <Route path='/signup' element={ !isExist ?  <Signup /> : <Navigate to="/" />} />
         <Route path='/otp' element={<Otp />} />
-        <Route path='/signin' element={<Signin />} />
-        <Route path='/forgotpass' element={<Forgotpass />} />
-        <Route path='/reset' element={<ResetPassword />} />
-        <Route path='*' element={ <NotFound />} />
-        <Route path='/' element={<Layout />}>
-          {/* Use index route for default child */}
+        <Route path='/signin' element={ <Signin /> } />
+        <Route path='/forgotpass' element={ isExist ?  <Forgotpass /> : <Navigate to="/signin" />} />
+        <Route path='/resetpass' element={ isExist ? <ResetPassword /> : <Navigate to="/signin" /> } />
+        <Route path='*' element={<NotFound />} />
+
+        <Route path='/' element={ isExist ?  <Layout />  : <Navigate to="/signin" />}>
           <Route index element={<Home />} />
         </Route>
       </>
-  )
-);
-
-function Routing() {
-  return <RouterProvider router={router} />;
+    )
+  );
+  return <RouterProvider router={router} />
 }
-
-
-export default Routing
+export default Routing;

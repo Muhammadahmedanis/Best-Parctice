@@ -1,4 +1,4 @@
-import React, { useActionState, useState } from 'react'
+import React, { useActionState, use } from 'react'
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate,  } from 'react-router-dom';
 import { FaRegEnvelope } from "react-icons/fa6";
@@ -6,9 +6,11 @@ import { LuEye } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { AuthContext } from '../context/authContext';
 
 function Signup() {
   const navigate = useNavigate();
+  const { dispatch } = use(AuthContext)
   const [formState, submitAction, isPending] = useActionState(async (previousState, formData) => {
     // const errors = {};
     const userName = formData.get("userName");
@@ -38,13 +40,16 @@ function Signup() {
   if (data.userName.length && data.email.length && data.password.length) {
     try {
         const response = await axios.post("/api/v1/auth/signup", data);
-        toast.success("Signup successfully");
-        console.log(response);
+        toast.success("Signup successful");
+        const userInfo = {user: userName ,admin: response?.data.data?.isAdmin}
+        console.log(userInfo);
+        dispatch({type: "AUTH_SUCCESS", payload: userInfo})
         navigate("/otp")
-        return { ...previousState, errors: null }; // Clear errors on success
+        // return { ...previousState, errors: null }; // Clear errors on success
       } catch (error) {
         toast.error(error.response?.data.message);
-        return { ...previousState, errors: { apiError: error.message } };
+        dispatch({type: "AUTH_FAIL", payload: error.response?.data.message})
+        // return { ...previousState, errors: error.message };
       }
     }
 });
@@ -98,7 +103,7 @@ function Signup() {
                 <span className="absolute right-1">
                   <FaRegUser className="w-5 h-5 mx-3 text-gray-300 dark:text-gray-500" />
                 </span>
-                <input type="text" name='userName' className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="abc" />
+                <input type="text" name='userName' required className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="abc" />
               </div>
                 {/* {errors?.userName && <p className="error text-red-700">{errors.userName}</p>} */}
             </div>
@@ -112,7 +117,7 @@ function Signup() {
                 <span className="absolute right-1">
                   <FaRegEnvelope className="w-5 h-5 mx-3 text-gray-300 dark:text-gray-500" />
                 </span>
-                <input type="email" name='email' className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="abc@gmail.com" />
+                <input type="email" name='email' required className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="abc@gmail.com" />
               </div>
                 {/* {errors?.email && <p className="error text-red-700">{errors.email}</p>} */}
             </div>
@@ -126,7 +131,7 @@ function Signup() {
                 <span className="absolute right-1">
                   <LuEye className="w-5 h-5 mx-3 text-gray-300 cursor-pointer dark:text-gray-500" />
                 </span>
-                <input type="password" name='password' className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="••••••••" />
+                <input type="password" name='password' required className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="••••••••" />
               </div>
               {/* {errors?.password && <p className="error text-red-700">{errors.password}</p>} */}
             </div>
