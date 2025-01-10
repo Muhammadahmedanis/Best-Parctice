@@ -1,15 +1,16 @@
-import React, { use, useActionState } from 'react'
+import React, { use, useActionState, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { FaRegEnvelope } from "react-icons/fa6";
 import { LuEye } from "react-icons/lu";
 import { toast } from 'react-toastify';
+import { FaRegEyeSlash } from "react-icons/fa6";
 import axios from 'axios';
 import { AuthContext } from '../context/authContext';
 
 function Signin() {
   const navigate = useNavigate();
   const { dispatch } = use(AuthContext);
-  
+  const[passIcon, setPassIcon] = useState("password");
    const[user, submitAction, isPending] = useActionState(async (previousState, formData) => {
     const email = formData.get("email");
     const password = formData.get("password");
@@ -28,7 +29,7 @@ function Signin() {
     if (userData.email.length && userData.password.length) {
       try {
         const response = await axios.post("/api/v1/auth/signin", userData)
-        toast.success("Signin successful");
+        toast.success(response.data.message);
         const name = email.match(/^[a-zA-Z]+/)[0];
         const userInfo = {user: name, admin: response?.data.data?.isAdmin}
         console.log(userInfo);
@@ -40,6 +41,15 @@ function Signin() {
       }
     }
    }) 
+
+   const handlePass = () => {
+    //  setPassIcon(!passIcon);
+    if (passIcon === "password") {
+      setPassIcon("text");
+    }else{
+      setPassIcon("password")
+    }
+   }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -66,9 +76,9 @@ function Signin() {
             </label>
             <div className="relative flex items-center mt-2">
               <span className="absolute right-1">
-                <FaRegEnvelope className="w-5 h-5 mx-3 text-gray-300 dark:text-gray-500"  />
+                <FaRegEnvelope className="w-5 h-5 mx-3 text-gray-400 dark:text-gray-500"  />
               </span>
-              <input type="email" name='email' required className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="abc@gmail.com" />
+              <input type="email" name='email' className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="abc@gmail.com" />
             </div>
           </div>
 
@@ -83,10 +93,10 @@ function Signin() {
             </Link>
             </div>
             <div className="relative flex items-center mt-2">
-              <span className="absolute right-1">
-                <LuEye className="w-5 h-5 mx-3 cursor-pointer text-gray-300 dark:text-gray-500"  />
+              <span onClick={handlePass} className="absolute right-1">
+                {passIcon === "password" ? <FaRegEyeSlash className="w-5 h-5 mx-3 cursor-pointer font-bold text-gray-400 dark:text-gray-500" /> : <LuEye className="w-5 h-5 mx-3 cursor-pointer text-gray-400 dark:text-gray-500" />}
               </span>
-              <input type="password" name='password' required className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="••••••••" />
+              <input type={passIcon === "password" ? "password" : "text" } name='password' className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="••••••••" />
             </div>
           </div>
 

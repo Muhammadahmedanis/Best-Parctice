@@ -41,7 +41,7 @@ function Nvabar() {
       await axios.post("/api/v1/auth/logout");
       toast.success("Logout successful");
       dispatch({type: "AUTH_LOGOUT"})
-      navigate("/signin")
+      // navigate("/signin")
     } catch (error) {
       dispatch({type: "AUTH_LOGOUT", payload: error.response?.data.message})
       toast.error(error.response?.data.message)

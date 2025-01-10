@@ -1,7 +1,18 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import axios from 'axios'
+import React, { useState } from 'react'
+import { Link, Navigate } from 'react-router-dom'
+import { toast } from 'react-toastify';
 
 function Forgotpass() {
+    const[email, setEmail] = useState('');
+    const haldleForgotPass = async() => {
+        try {
+            await axios.post("/api/v1/auth/forgotPass", { email });
+            toast.success("Email sent Successful");
+        } catch (error) {
+            toast.error(error.response?.data.message);
+        }
+    }
   return (
     <div className='flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900'>
     <main id="content" role="main" className="w-full max-w-md p-6">
@@ -11,11 +22,11 @@ function Forgotpass() {
                     <div className="flex items-end justify-center mb-8 text-2xl font-bold">
                     <img className="w-auto h-7 sm:h-8" src="https://merakiui.com/images/logo.svg" alt=""/>
                     </div>
-                    <h1 className="block text-lg font-bold text-gray-800">Reset Password</h1>
+                    <h1 className="block text-lg font-bold text-gray-800">Forgot Password</h1>
                     <p className='text-[15px] font-normal'>Enter your email and we'll send you a link to reset your password.</p>
                 </div>
                 <div className="mt-5">
-                    <form>
+                    <div>
                         <div className="grid gap-y-4">
                             <div>
                                 <label htmlFor="email" className="block mb-2 ml-1 text-[17px] font-semibold">
@@ -23,6 +34,7 @@ function Forgotpass() {
                                 </label>
                                 <div className="relative">
                                     <input
+                                        onChange={(e) => setEmail(e.target.value)}
                                         type="email"
                                         id="email"
                                         name="email"
@@ -36,9 +48,10 @@ function Forgotpass() {
                                 </p>
                             </div>
                             <button
+                            onClick={haldleForgotPass}
                                 type="submit"
-                                className="inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white transition-all bg-indigo-500 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                                Change my password
+                                className="inline-flex items-center justify-center gap-2 px-4 py-3 text-[15px] font-bold text-white transition-all bg-indigo-500 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                Reset Password
                             </button>
                             <button
                                 className="inline-flex items-center border-gray-200 justify-center gap-2 px-4 py-3 text-sm font-bold text-gray-700 transition-all  border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
@@ -47,7 +60,7 @@ function Forgotpass() {
                                 </Link>
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

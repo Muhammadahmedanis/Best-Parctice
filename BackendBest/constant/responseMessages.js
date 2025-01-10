@@ -8,6 +8,7 @@ export const responseMessages = {
 
     ERROR_MESSAGES: 'Internal Server Error',
     EMAIL_VERIFY: "Email Verified Successfully",
+    NOT_VERIFY: 'Email is not verified',
 
     GET_SUCCESS_MESSAGES: 'Got Resource Successfully',
     GET_UNSUCCESS_MESSAGES: 'No resource found',
@@ -19,7 +20,7 @@ export const responseMessages = {
     INTERNAL_ERROR_MESSAGE: 'Something went wrong',
     INVALID_OTP: "Invalid OTP, try again",
     INVALID_TOKEN: "Unauthorized User, Invalid token",
-    
+
     MISSING_FIELDS: 'All Fields are required',
     MISSING_FIELD_EMAIL: 'Email Field is Required',
 
@@ -34,7 +35,7 @@ export const responseMessages = {
     PASSWORD_FAILED: 'Password is same as before',
     PASSWORD_UPDATED: 'Password reset Successfully',
     
-    RESET_LINK_SUCCESS: 'Reset Email Send... Please Check your Email',
+    RESET_LINK_SUCCESS: 'Reset Password link Send... Please Check your Email',
     REQUEST_UNSUCCESS: 'Your Invitation is already send before, cannot send again',
     REQUEST_SUCCESS: 'Your Invitation is sent, wait for the admin approval',
     

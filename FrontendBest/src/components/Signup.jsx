@@ -1,7 +1,7 @@
-import React, { useActionState, use } from 'react'
+import React, { useActionState, use, useState } from 'react'
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate,  } from 'react-router-dom';
-import { FaRegEnvelope } from "react-icons/fa6";
+import { FaRegEnvelope, FaRegEyeSlash } from "react-icons/fa6";
 import { LuEye } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa6";
 import { toast } from 'react-toastify';
@@ -11,6 +11,7 @@ import { AuthContext } from '../context/authContext';
 function Signup() {
   const navigate = useNavigate();
   const { dispatch } = use(AuthContext)
+  const[passIcon, setPassIcon] = useState("password");
   const [formState, submitAction, isPending] = useActionState(async (previousState, formData) => {
     // const errors = {};
     const userName = formData.get("userName");
@@ -53,6 +54,14 @@ function Signup() {
       }
     }
 });
+
+const handlePass = () => {
+  if (passIcon === "password") {
+    setPassIcon("text");
+  }else{
+    setPassIcon("password")
+  }
+ }
 
   // const { errors } = formState || {};
 
@@ -128,10 +137,10 @@ function Signup() {
                 Password
               </label>
               <div className="relative flex items-center mt-2">
-                <span className="absolute right-1">
-                  <LuEye className="w-5 h-5 mx-3 text-gray-300 cursor-pointer dark:text-gray-500" />
+               <span onClick={handlePass} className="absolute right-1">
+                  {passIcon === "password" ? <FaRegEyeSlash className="w-5 h-5 mx-3 cursor-pointer font-bold text-gray-400 dark:text-gray-500" /> : <LuEye className="w-5 h-5 mx-3 cursor-pointer text-gray-400 dark:text-gray-500" />}
                 </span>
-                <input type="password" name='password' required className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="••••••••" />
+                <input type={passIcon === "password" ? "password" : "text" } name='password' required className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="••••••••" />
               </div>
               {/* {errors?.password && <p className="error text-red-700">{errors.password}</p>} */}
             </div>

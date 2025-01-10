@@ -12,16 +12,17 @@ import { AuthContext } from '../context/authContext'
 
 function Routing() {
   const { user } = use(AuthContext);
-  const isExist = user.user;
+  const isExist = user?.user;
+  console.log(isExist);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
         <Route path='/signup' element={ !isExist ?  <Signup /> : <Navigate to="/" />} />
         <Route path='/otp' element={<Otp />} />
-        <Route path='/signin' element={ <Signin /> } />
+        <Route path='/signin' element={ !isExist ?  <Signin /> : <Navigate to="/" /> } />
         <Route path='/forgotpass' element={ isExist ?  <Forgotpass /> : <Navigate to="/signin" />} />
-        <Route path='/resetpass' element={ isExist ? <ResetPassword /> : <Navigate to="/signin" /> } />
+        <Route path='/resetPass/:token' element={ isExist ?  <ResetPassword /> : <Navigate to="/signin" /> } />
         <Route path='*' element={<NotFound />} />
 
         <Route path='/' element={ isExist ?  <Layout />  : <Navigate to="/signin" />}>
