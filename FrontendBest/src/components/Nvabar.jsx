@@ -1,4 +1,4 @@
-import React, { use, useContext, useEffect, useState } from "react";
+import React, { use, useState } from "react";
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import { IoMdCloseCircle } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -7,7 +7,7 @@ import axios from "axios";
 import { AuthContext } from "../context/authContext";
 import { toast } from "react-toastify";
 import { FiMoon } from "react-icons/fi";
-import { IoHomeOutline, IoStatsChart } from "react-icons/io5";
+import { IoHomeOutline  } from "react-icons/io5";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { ImStatsBars2 } from "react-icons/im";
 import { IoSunnyOutline } from "react-icons/io5";
@@ -41,7 +41,6 @@ function Nvabar() {
       await axios.post("/api/v1/auth/logout");
       toast.success("Logout successful");
       dispatch({type: "AUTH_LOGOUT"})
-      // navigate("/signin")
     } catch (error) {
       dispatch({type: "AUTH_LOGOUT", payload: error.response?.data.message})
       toast.error(error.response?.data.message)

@@ -1,16 +1,14 @@
-// import authRouter from './src/auth/routes.js';
-// import { connectDB } from './src/auth/db.js';
 import express from 'express';
 import authRouter from './routes/auth.js';
 import 'dotenv/config';
 import { connectDB } from './config/dbConfig.js';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
-import { ENV } from './constant/index.js';
 import cors from 'cors';
 import { rateLimit } from 'express-rate-limit'
 import { StatusCodes } from 'http-status-codes';
 import { sendError } from './utils/responses.js';
+import mongoSanitize from 'express-mongo-sanitize'
 
 const app = express();
 app.use(express.json());
@@ -18,6 +16,7 @@ app.use(cors({
     origin: process.env.CLIENT_URL,
     credentials: true
 }));
+app.use(mongoSanitize())
 app.use(cookieParser()) // after this res.cokiesParser() return object need for use is cookies ma data bhj or le raha hain
 app.use(helmet()); // use to secure out header like in our network tab we can x-powered by express so using header it will remove 
 connectDB();
@@ -43,7 +42,7 @@ app.all("*", (req, res) => {
     }))
 })
 
-const PORT = ENV.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log("Server working");

@@ -1,12 +1,15 @@
 import React, { useActionState, use, useState } from 'react'
 import { FcGoogle } from "react-icons/fc";
-import { Link, useNavigate,  } from 'react-router-dom';
+import { Link, Navigate, useNavigate,  } from 'react-router-dom';
 import { FaRegEnvelope, FaRegEyeSlash } from "react-icons/fa6";
 import { LuEye } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { AuthContext } from '../context/authContext';
+import Input from './Input';
+import Label from './Label';
+import { getData } from '../components/Otp.jsx';
 
 function Signup() {
   const navigate = useNavigate();
@@ -41,10 +44,12 @@ function Signup() {
   if (data.userName.length && data.email.length && data.password.length) {
     try {
         const response = await axios.post("/api/v1/auth/signup", data);
-        toast.success("Signup successful");
-        const userInfo = {user: userName ,admin: response?.data.data?.isAdmin}
+        localStorage.setItem("token", JSON.stringify(response.data.token))
+        const userInfo = {user: userName ,admin: response?.data.data?.isAdmin};
+        getData({email:  response?.data.data?.email, _id:  response?.data.data?._id});
+        dispatch({type: "AUTH_SUCCESS", payload: userInfo});
         console.log(userInfo);
-        dispatch({type: "AUTH_SUCCESS", payload: userInfo})
+        toast.success(response.data.message);
         navigate("/otp")
         // return { ...previousState, errors: null }; // Clear errors on success
       } catch (error) {
@@ -104,43 +109,34 @@ const handlePass = () => {
 
           <form action={submitAction}>
             <div className='my-4'>
-              <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-                htmlFor="LoggingUsername" >
-                Username
-              </label>
+            <Label htmlFor="LoggingUsername" labelName="Username" />
               <div className="relative flex items-center mt-2">
                 <span className="absolute right-1">
                   <FaRegUser className="w-5 h-5 mx-3 text-gray-300 dark:text-gray-500" />
                 </span>
-                <input type="text" name='userName' required className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="abc" />
+                <Input type="email" name="userName" placeholder="abc"  />
               </div>
                 {/* {errors?.userName && <p className="error text-red-700">{errors.userName}</p>} */}
             </div>
 
             <div className='my-4'>
-              <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-                htmlFor="LoggingEmailAddress" >
-                Email Address
-              </label>
+              <Label htmlFor="LoggingEmailAddress" labelName="Email Address" />
               <div className="relative flex items-center mt-2">
                 <span className="absolute right-1">
                   <FaRegEnvelope className="w-5 h-5 mx-3 text-gray-300 dark:text-gray-500" />
                 </span>
-                <input type="email" name='email' required className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="abc@gmail.com" />
+                <Input type="email" name="email" placeholder="abc@gmail.com" />
               </div>
                 {/* {errors?.email && <p className="error text-red-700">{errors.email}</p>} */}
             </div>
 
             <div className='my-2'>
-              <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-                htmlFor="LoggingEmailAddress" >
-                Password
-              </label>
+              <Label htmlFor="LoggingPassword" labelName="Password" />
               <div className="relative flex items-center mt-2">
                <span onClick={handlePass} className="absolute right-1">
                   {passIcon === "password" ? <FaRegEyeSlash className="w-5 h-5 mx-3 cursor-pointer font-bold text-gray-400 dark:text-gray-500" /> : <LuEye className="w-5 h-5 mx-3 cursor-pointer text-gray-400 dark:text-gray-500" />}
                 </span>
-                <input type={passIcon === "password" ? "password" : "text" } name='password' required className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="••••••••" />
+                <Input type={passIcon === "password" ? "password" : "text" } name="password" placeholder="••••••••" />
               </div>
               {/* {errors?.password && <p className="error text-red-700">{errors.password}</p>} */}
             </div>

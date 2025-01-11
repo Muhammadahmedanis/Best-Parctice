@@ -24,7 +24,7 @@ export const responseMessages = {
     MISSING_FIELDS: 'All Fields are required',
     MISSING_FIELD_EMAIL: 'Email Field is Required',
 
-    NO_USER_FOUND: `Email doesn't exists`,
+    NO_USER_FOUND: "Email doesn't exists",
     NO_USER: 'No User found',
 
     
@@ -38,8 +38,9 @@ export const responseMessages = {
     RESET_LINK_SUCCESS: 'Reset Password link Send... Please Check your Email',
     REQUEST_UNSUCCESS: 'Your Invitation is already send before, cannot send again',
     REQUEST_SUCCESS: 'Your Invitation is sent, wait for the admin approval',
+    RESET_OTP_SECCESS: 'Otp resend... Please Check your Email',
     
-    SUCCESS_REGISTRATION: 'User Registartion Successful',
+    SUCCESS_REGISTRATION: 'User Registration Successful',
     SUCCESS_LOGIN: 'User Login Successful',
     SUCCESS_LOGOUT: 'Logout Successful',
     SUCCESS_DEACTIVATE: 'User Deactivation Successful',

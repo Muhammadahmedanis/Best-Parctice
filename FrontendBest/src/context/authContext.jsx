@@ -1,10 +1,9 @@
 import { useEffect } from "react";
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useReducer } from "react";
 
 const INITIAL_STATE = {
-  user: JSON.parse(localStorage.getItem("user")) || null,
-  loading: false,
-  error: null,  
+  user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
+  error: null, 
 }
 
 export const AuthContext = createContext(INITIAL_STATE);
@@ -23,10 +22,28 @@ const AuthReducer = (state, action) => {
           error: action.payload,
         };
       
-        case "AUTH_LOGOUT":{
-          localStorage.removeItem("user");
-          return INITIAL_STATE;
-        }
+        case "AUTH_LOGOUT":
+          localStorage.clear();
+          return {
+            user: null,
+            error: null
+        };
+
+      // case "CHECK_AUTH": {
+      //   return { ...state, isAuthenticated: action.payload}
+        // async () => {
+        //   try {
+        //     const res = await axios.get("/api/v1/auth/checkAuth", {
+        //       headers: {
+        //         Authorization: `Bearer: ${token}`
+        //       }
+        //     })
+        //     return true;
+        //   } catch (error) {
+        //     return false
+        //   }
+        // }
+      // }
 
     default:
       return state;
@@ -39,7 +56,7 @@ export const AuthContextProvider = ({ children }) => {
     localStorage.setItem("user", JSON.stringify(state.user));
   }, [state.user])
   return (
-    <AuthContext.Provider value={{ user: state.user, loading: state.loading, error: state.error, dispatch }}>
+    <AuthContext.Provider value={{ user: state.user, error: state.error, dispatch }}>
       {children}
     </AuthContext.Provider>
   );

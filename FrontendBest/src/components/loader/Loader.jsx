@@ -16,7 +16,7 @@ const Loader = () => {
         <div></div>
       </div>
       <div className='mt-8 '>
-       <h2 className='text-xl font-bold '>Bloggify</h2>
+       <h2 className='text-xl font-bold '>Meraki</h2>
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 import { FaRegEyeSlash } from "react-icons/fa6";
 import axios from 'axios';
 import { AuthContext } from '../context/authContext';
+import Input from './Input';
+import Label from './Label';
 
 function Signin() {
   const navigate = useNavigate();
@@ -28,7 +30,8 @@ function Signin() {
     const userData = { email, password };
     if (userData.email.length && userData.password.length) {
       try {
-        const response = await axios.post("/api/v1/auth/signin", userData)
+        const response = await axios.post("/api/v1/auth/signin", userData);
+        // console.log(response.data.token);
         toast.success(response.data.message);
         const name = email.match(/^[a-zA-Z]+/)[0];
         const userInfo = {user: name, admin: response?.data.data?.isAdmin}
@@ -43,7 +46,6 @@ function Signin() {
    }) 
 
    const handlePass = () => {
-    //  setPassIcon(!passIcon);
     if (passIcon === "password") {
       setPassIcon("text");
     }else{
@@ -70,24 +72,18 @@ function Signin() {
           <p className="mt-3 text-xl text-center text-gray-600 dark:text-gray-200">Welcome back!</p>
           <form action={submitAction}>
           <div className='my-4'>
-            <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-                htmlFor="LoggingEmailAddress" >
-                Email Address
-            </label>
+            <Label htmlFor="LoggingEmailAddress" labelName="Email Address" />
             <div className="relative flex items-center mt-2">
               <span className="absolute right-1">
                 <FaRegEnvelope className="w-5 h-5 mx-3 text-gray-400 dark:text-gray-500"  />
               </span>
-              <input type="email" name='email' className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="abc@gmail.com" />
+              <Input type="email" name='email' placeholder="abc@gmail.com" />
             </div>
           </div>
 
           <div className='my-2'>
           <div className="flex justify-between">
-            <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
-                htmlFor="LoggingEmailAddress" >
-                Password
-            </label>
+            <Label htmlFor="LoggingPassword" labelName="Password" />
             <Link to="/forgotPass" className="text-xs text-gray-500 dark:text-gray-300 hover:underline">
               Forget Password?
             </Link>
@@ -96,7 +92,7 @@ function Signin() {
               <span onClick={handlePass} className="absolute right-1">
                 {passIcon === "password" ? <FaRegEyeSlash className="w-5 h-5 mx-3 cursor-pointer font-bold text-gray-400 dark:text-gray-500" /> : <LuEye className="w-5 h-5 mx-3 cursor-pointer text-gray-400 dark:text-gray-500" />}
               </span>
-              <input type={passIcon === "password" ? "password" : "text" } name='password' className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="••••••••" />
+              <Input type={passIcon === "password" ? "password" : "text" } name="password" placeholder="••••••••" />
             </div>
           </div>
 
@@ -110,7 +106,7 @@ function Signin() {
 
           <div className="flex items-center justify-between mt-4">
             <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
-            <Link to='/'>
+            <Link to='/signup'>
               <div className="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline"> or sign up </div>
             </Link>
             <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>

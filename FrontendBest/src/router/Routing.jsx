@@ -1,4 +1,4 @@
-import React, { use, useContext } from 'react'
+import React, { use } from 'react'
 import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider, useParams } from 'react-router-dom'
 import Signup from '../components/Signup'
 import Signin from '../components/Signin'
@@ -18,8 +18,8 @@ function Routing() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
-        <Route path='/signup' element={ !isExist ?  <Signup /> : <Navigate to="/" />} />
-        <Route path='/otp' element={<Otp />} />
+        <Route path='/signup' element={  <Signup /> } />
+        <Route path='/otp' element={ <Otp />} />
         <Route path='/signin' element={ !isExist ?  <Signin /> : <Navigate to="/" /> } />
         <Route path='/forgotpass' element={ isExist ?  <Forgotpass /> : <Navigate to="/signin" />} />
         <Route path='/resetPass/:token' element={ isExist ?  <ResetPassword /> : <Navigate to="/signin" /> } />

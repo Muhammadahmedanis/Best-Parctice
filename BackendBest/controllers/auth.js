@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { ENV } from '../constant/index.js';
 import nodemailer from 'nodemailer'
 import Users from '../models/user.js';
 import bcrypt from 'bcrypt';
@@ -7,8 +6,8 @@ import 'dotenv/config';
 import { StatusCodes } from 'http-status-codes';
 import { sendError, sendSuccess } from '../utils/responses.js';
 import { responseMessages } from '../constant/responseMessages.js';
-import { generateToken } from '../helpers/token.js';
-const { MISSING_FIELDS, USER_NAME_EXISTS, UN_AUTHORIZED, SUCCESS_REGISTRATION, NO_USER, SUCCESS_LOGIN, INVALID_OTP, OTP_EXPIRED, EMAIL_VERIFY, SUCCESS_LOGOUT, MISSING_FIELD_EMAIL, NO_USER_FOUND, RESET_LINK_SUCCESS, PASSWORD_UPDATED, NOT_VERIFY, PASSWORD_AND_CONFIRM_NO_MATCH } = responseMessages
+import { generateToken } from '../middleware/token.js';
+const { MISSING_FIELDS, USER_NAME_EXISTS, UN_AUTHORIZED, SUCCESS_REGISTRATION, NO_USER, SUCCESS_LOGIN, INVALID_OTP, OTP_EXPIRED, EMAIL_VERIFY, SUCCESS_LOGOUT, MISSING_FIELD_EMAIL, NO_USER_FOUND, RESET_LINK_SUCCESS, PASSWORD_UPDATED, NOT_VERIFY, PASSWORD_AND_CONFIRM_NO_MATCH, RESET_OTP_SECCESS, INVALID_TOKEN } = responseMessages
 import { v4 as uuidv4 } from 'uuid'
 import { sendEmailOTP } from '../helpers/sendEmail.js';
 
@@ -45,9 +44,8 @@ export const signUp = async (req, res) => {
                         doc.isVerified = false;
                         const emailResponse = await sendEmailOTP(email, otp);
                         savedUser.password = undefined;
-                        const token = generateToken({ data: savedUser, expiresIn: '24h' })
+                        const token = generateToken({ data: savedUser._doc, res })
                         console.log(emailResponse, "email");
-
                         return res.status(StatusCodes.CREATED).send(sendSuccess({ status: true, message: SUCCESS_REGISTRATION, data: savedUser, token }));
                     }
                 } else {
@@ -60,6 +58,8 @@ export const signUp = async (req, res) => {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({ status: 500, message: error.message }));
     }
 };
+
+
 
 
 // @desc    VERIFY EMAIL
@@ -113,16 +113,9 @@ export const signIn = async (req, res) => {
         if (user && user.isVerified) {
             const checkPassword = bcrypt.compareSync(password, user.password);
             if (checkPassword) {
-                const dateAfter24Hr = new Date().getTime() + (24 * 60 * 60 * 1000);
-                const token = generateToken({ data: user, expiresIn: '24h' });
-                // const tokenPayload = ({id: user._id, email: user.email, password: user.password, admin: user.isAdmin })
+                const token = generateToken({ data: user, res });
                 user.password = undefined;
-                res.cookie("token", token, {
-                    httpOnly: true,
-                    secure: true,
-                    expires: new Date(dateAfter24Hr),  // this is cookies expires and automatically logout hojaifa cookies nahi hogi
-                });
-                res.status(StatusCodes.OK).send(sendSuccess({ status: true, message: SUCCESS_LOGIN, data: user, token }))
+                return res.status(StatusCodes.OK).send(sendSuccess({ status: true, message: SUCCESS_LOGIN, data: user, token }))
             } else {
                 return res.status(StatusCodes.UNAUTHORIZED).send(sendError({ status: false, message: UN_AUTHORIZED }))
             }
@@ -250,9 +243,8 @@ export const resetPasswordEmail = async(req, res) => {
                     return res.status(StatusCodes.NOT_FOUND).send(sendError({ status: false, message: NO_USER}))
                 }
             }else {
-                return res.status(StatusCodes.UN_AUTHORIZED).send(sendError({status: false, message: PASSWORD_AND_CONFIRM_NO_MATCH}))
+                return res.status(StatusCodes.UNAUTHORIZED).send(sendError({status: false, message: PASSWORD_AND_CONFIRM_NO_MATCH}))
             }
-
         }else{
             return res.status(StatusCodes.BAD_REQUEST).send({status: false, message: MISSING_FIELDS});
         }
@@ -263,8 +255,49 @@ export const resetPasswordEmail = async(req, res) => {
 
 
 
+// @desc    RESEND-OTP
+// @route   POST api/v1/auth/resendOtp
+// @access  Private
+
+export const resendOtp = async (req, res) => {
+    try {
+       const { email, _id } = req.body  
+       if(email && _id){
+        const isUser = Users.findOne({email, _id});
+        if(isUser){
+            const newOtp = uuidv4().slice(0,6);
+            const updOtp = await Users.findByIdAndUpdate({ _id }, 
+                { $set: { otp: newOtp, expiresIn : Date.now() + 600000 }},
+                { new: true },
+            )
+            if(updOtp){
+                const emailResponse = await sendEmailOTP(email, newOtp);
+                return res.status(StatusCodes.OK).send(sendSuccess({ status: true, message: RESET_OTP_SECCESS, data: newOtp}))
+            }else{
+                return res.status(StatusCodes.UNPROCESSABLE_ENTITY).status({ status: false, message: INVALID_TOKEN})
+            }
+        }else{
+            return res.status(StatusCodes.UNPROCESSABLE_ENTITY).send(sendError({status: false, message: NO_USER}))
+        }
+       }else{
+        return res.status(StatusCodes.BAD_REQUEST).send(sendError({status: false, message: NO_USER}))
+       }
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({status: "fail", message: error.message}))
+    }
+}
 
 
-//diff b/w encoding and encryption is encryption ko decode karna ka lia key chahia hoti ha but encoding ka lia nahi
-//diff b/w normal cokkies and http cookies id normal cookies ko ham get karsakta hain JS se but http nahi aur nahikoi another library et karsakti ha http cookies ko
-// jwt and cookies expire both are different  cookies expire decided given time ka baad ye browser se remove hoga and jwt ma expire decided karega jwt kab tak valid h
+
+// export const checkAuth = async (req, res) => {
+//     try {
+//         const user = await Users.findById(req.user._id);
+//         if (user) {
+//           return res.status(StatusCodes.OK).send(sendSuccess({status: true, data: {...user._doc, password: undefined}}));  
+//         } else {
+//             return res.status(StatusCodes.BAD_REQUEST).send(sendError({status: false, message: NO_USER}));
+//         }
+//     } catch (error) {
+//         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({status: false, message: error.message}))   
+//     }
+// }

@@ -3,33 +3,35 @@ import React, { useActionState, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+export const getData = (data) => {
+  return data;
+};
+ 
 const Otp = () => {
-    const navigate = useNavigate()
+  const navigate = useNavigate()
+  let token = JSON.parse(localStorage.getItem("token"));
   const [otpNum, setOtpNum] = useState(["", "", "", "", "", ""]);
   const[disable, setDisable] = useState(false);
 
   const[user, submitAction, isPending] = useActionState(async (previousState, formData) => {
     try {
       const otp = otpNum.join('');
-      console.log(otp);
+      console.log(token);
         let res = await axios.post("/api/v1/auth/verifyEmail", {otp} ,  {
           headers: {
-            Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJOYW1lIjoiQWltYW4iLCJlbWFpbCI6ImF5bWFuYW5pczcyOUBnbWFpbC5jb20iLCJpc0FkbWluIjpmYWxzZSwiaXNWZXJpZmllZCI6ZmFsc2UsIl9pZCI6IjY3N2ZhNDcxZWYwYjg2NjU0YzFjZTg2NSIsIm90cCI6IjRkZWRhNiIsImV4cGlyZXNJbiI6IjIwMjUtMDEtMDlUMTA6MzY6NTcuNzU1WiIsImNyZWF0ZWRBdCI6IjIwMjUtMDEtMDlUMTA6MjY6NTcuNzU3WiIsInVwZGF0ZWRBdCI6IjIwMjUtMDEtMDlUMTA6MjY6NTcuNzU3WiIsIl9fdiI6MH0sImlhdCI6MTczNjQxODQyMH0.UKepT2nztk0A8d0Jj8GiRvG_walrwxCcm_eXg_eeAPc"}` // Set the token in the header
+            Authorization: `Bearer ${token}` // Set the token in the header
           }
         });
-        toast.success("OTP verified successfully")
-        console.log(res);
+        toast.success(response.data.message)
         navigate("/signin");
     } catch (error) {
         toast.error(error.response?.data.message)
     }
-    // setOtp(["", "", "", "","",""])
+    setOtpNum(["", "", "", "","",""])
 })
 
   const handleChange = (e, index) => {
     const value = e.target.value;
-    // if (/[^0-9]/.test(value)) return; // Only allow numbers
-
     const newOtp = [...otpNum];
     newOtp[index] = value;
     setOtpNum(newOtp);
@@ -41,6 +43,17 @@ const Otp = () => {
     index == 5 && setDisable(true)
 };
 
+const handleNewOtp = async () => {
+  try {
+    const result = getData({ email: response?.data?.data?.email, _id: response?.data?.data?._id });    
+    const { email, _id } = result;
+    const response = await axios.post("/api/v1/auth/resendOtp", {email, _id})
+    toast.success(response.data.message)
+  } catch (error) {
+    toast.error(error.response?.data.message)
+  }
+}
+
 const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && otpNum[index] === "") {
         // Move focus to the previous input when backspace is pressed and the current input is empty
@@ -50,15 +63,13 @@ const handleKeyDown = (e, index) => {
     }
 };
 
-
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
     <div className="max-w-md mx-auto text-center bg-white px-4 sm:px-8 py-10 rounded-xl shadow">
       <header className="mb-8">
-        <h1 className="text-2xl font-bold mb-1">Mobile Phone Verification</h1>
+        <h1 className="text-2xl font-bold mb-1">Email Verification</h1>
         <p className="text-[16px] text-slate-500">
-          Enter the 4-digit verification code that was sent to your email.
+          Enter the 6-digit verification code that was sent to your email.
         </p>
       </header>
       <form action={submitAction} id="otp-form">
@@ -90,7 +101,7 @@ const handleKeyDown = (e, index) => {
       </form>
       <div className="text-sm text-slate-500 mt-4">
         Didn't receive code?{' '}
-        <a className="font-medium text-indigo-500 hover:text-indigo-600" href="#0"> Resend </a>
+        <button onClick={handleNewOtp} className="font-medium text-indigo-500 hover:text-indigo-600" href="#0"> Resend </button>
       </div>
     </div>
     </div>
