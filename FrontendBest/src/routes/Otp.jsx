@@ -13,22 +13,23 @@ const Otp = () => {
   const [otpNum, setOtpNum] = useState(["", "", "", "", "", ""]);
   const[disable, setDisable] = useState(false);
 
-  const[user, submitAction, isPending] = useActionState(async (previousState, formData) => {
+  const [user, submitAction, isPending] = useActionState(async (previousState, formData) => {
     try {
       const otp = otpNum.join('');
-      console.log(token);
-        let res = await axios.post("/api/v1/auth/verifyEmail", {otp} ,  {
-          headers: {
-            Authorization: `Bearer ${token}` // Set the token in the header
-          }
-        });
-        toast.success(response.data.message)
-        navigate("/signin");
+      const res = await axios.post("/api/v1/auth/verifyEmail", { otp }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res.data);
+      toast.success(res.data.message);
+      navigate("/signin");
     } catch (error) {
-        toast.error(error.response?.data.message)
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setOtpNum(["", "", "", "", "", ""]);
     }
-    setOtpNum(["", "", "", "","",""])
-})
+  });
 
   const handleChange = (e, index) => {
     const value = e.target.value;

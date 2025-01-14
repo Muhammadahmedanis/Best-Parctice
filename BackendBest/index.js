@@ -9,6 +9,7 @@ import { StatusCodes } from 'http-status-codes';
 import { sendError } from './utils/responses.js';
 import mongoSanitize from 'express-mongo-sanitize';
 import { createRateLimiter } from './middleware/rate-limitting.js';
+import userRouter from './routes/user.js';
 
 const app = express();
 app.use(express.json());
@@ -33,6 +34,7 @@ connectDB();
 // app.use(limiter)
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/admin", userRouter);
 
 app.all("*", (req, res) => {
     res.status(StatusCodes.NOT_FOUND).send(sendError({

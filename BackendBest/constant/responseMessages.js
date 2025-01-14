@@ -1,6 +1,8 @@
 export const responseMessages = {
     ADD_SUCCESS_MESSAGES: 'resource added successfully',
     ADD_UNSUCCESS_MESSAGES: 'data already available in DB',
+    ADMIN_ACCESS: 'Admin has access to this page',
+
 
     DELETED_SUCCESS_MESSAGES: 'resource deleted successfully',
     DELETED_UNSUCCESS_MESSAGES: 'resource cannot be deleted',

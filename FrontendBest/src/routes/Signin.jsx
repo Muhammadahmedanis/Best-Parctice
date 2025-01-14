@@ -6,8 +6,8 @@ import { toast } from 'react-toastify';
 import { FaRegEyeSlash } from "react-icons/fa6";
 import axios from 'axios';
 import { AuthContext } from '../context/authContext';
-import Input from './Input';
-import Label from './Label';
+import Input from '../components/Input';
+import Label from '../components/Label';
 
 function Signin() {
   const navigate = useNavigate();
@@ -31,11 +31,9 @@ function Signin() {
     if (userData.email.length && userData.password.length) {
       try {
         const response = await axios.post("/api/v1/auth/signin", userData);
-        // console.log(response.data.token);
         toast.success(response.data.message);
         const name = email.match(/^[a-zA-Z]+/)[0];
         const userInfo = {user: name, admin: response?.data.data?.isAdmin}
-        console.log(userInfo);
         dispatch({type: "AUTH_SUCCESS", payload: userInfo})
         navigate("/");
       } catch (error) {

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 import { StatusCodes } from 'http-status-codes';
 import { responseMessages } from '../constant/responseMessages.js';
-const { INVALID_TOKEN} = responseMessages;
+const { INVALID_TOKEN, ADMIN_ACCESS} = responseMessages;
 const { sign, verify } = jwt;
 
 export const generateToken = ({data, res}) => {
@@ -15,7 +15,6 @@ export const generateToken = ({data, res}) => {
         sameSite: "strict", // Prevent cross-site request forgery (CSRF)
         maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds  this is cookies expires and automatically logout hojaifa cookies nahi hogi
     });
-
     return token;
 }
 
@@ -27,8 +26,9 @@ export const tokenVerify = (req, res, next) => {
             if ( authorization && authorization.startsWith('Bearer')) {
             // Verify Token
             const token = authorization.split(" ")[1];
-            const { data } = verify(token, process.env.JWT_SECRET_KEY);
+            const data = verify(token, process.env.JWT_SECRET_KEY);
             req.user = data;
+            
             next(); // Proceed to the next middleware
         }else{
             return res.status(StatusCodes.UNAUTHORIZED).send({ status: false, message: INVALID_TOKEN});
@@ -38,3 +38,18 @@ export const tokenVerify = (req, res, next) => {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ status: false, message: error.message });
     }
 };
+
+
+export const verifyAdmin = async (req, res, next) => {
+    try {
+        tokenVerify(req, res, next, () => {
+            if (req.user?.isAdmin) {
+                next()
+            } else {
+                return res.status(StatusCodes.UNAUTHORIZED).send(sendError({status: false, message: ADMIN_ACCESS}))
+            }
+        })
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({status: false, message: error.message}));
+    }
+}

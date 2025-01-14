@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
-import Nvabar from "../components/Nvabar";
-import Footer from "../components/Footer";
+import Nvabar from "../components/Nvabar.jsx";
+import Footer from "../components/Footer.jsx";
 import { useEffect, useState } from "react";
-import { ThemeContextProvider } from "../context/themeContext";
+import { ThemeContextProvider } from "../context/themeContext.jsx";
 import Loader from "../components/loader/Loader.jsx";
 
 const Layout = () => {

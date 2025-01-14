@@ -7,9 +7,9 @@ import { FaRegUser } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { AuthContext } from '../context/authContext';
-import Input from './Input';
-import Label from './Label';
-import { getData } from '../components/Otp.jsx';
+import Input from '../components/Input';
+import Label from '../components/Label';
+import { getData } from './Otp.jsx';
 
 function Signup() {
   const navigate = useNavigate();
@@ -114,7 +114,7 @@ const handlePass = () => {
                 <span className="absolute right-1">
                   <FaRegUser className="w-5 h-5 mx-3 text-gray-300 dark:text-gray-500" />
                 </span>
-                <Input type="email" name="userName" placeholder="abc"  />
+                <Input type="text" name="userName" placeholder="abc"  />
               </div>
                 {/* {errors?.userName && <p className="error text-red-700">{errors.userName}</p>} */}
             </div>

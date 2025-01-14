@@ -70,6 +70,8 @@ export const verifyEmail = async (req, res) => {
     try {
         const { otp } = req.body;
         if (otp) {
+            // console.log(req);
+            
             const user = await Users.findOne({ email: req.user.email });
             if (user) {
                 const isOtpVerified = await Users.findOne({ otp });
