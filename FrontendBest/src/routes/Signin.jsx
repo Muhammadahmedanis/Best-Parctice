@@ -33,6 +33,7 @@ function Signin() {
         const response = await axios.post("/api/v1/auth/signin", userData);
         toast.success(response.data.message);
         const name = email.match(/^[a-zA-Z]+/)[0];
+        localStorage.setItem("token", JSON.stringify(response.data.token))
         const userInfo = {user: name, admin: response?.data.data?.isAdmin}
         dispatch({type: "AUTH_SUCCESS", payload: userInfo})
         navigate("/");

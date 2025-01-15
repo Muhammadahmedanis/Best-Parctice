@@ -14,12 +14,12 @@ import { AuthContext } from './context/authContext'
 import { use } from 'react';
 import Dashboard from './components/Dashboard'
 
+
 function App() {
     const { user } = use(AuthContext);
     const isExist = user?.user;
     const isAdmin = user?.admin;
     console.log("user:- ",isExist);
-    
 
     const router = createBrowserRouter(
       createRoutesFromElements(
