@@ -1,6 +1,6 @@
 import React, { useActionState, use, useState } from 'react'
 import { FcGoogle } from "react-icons/fc";
-import { Link, Navigate, useNavigate,  } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaRegEnvelope, FaRegEyeSlash } from "react-icons/fa6";
 import { LuEye } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa6";
@@ -60,14 +60,13 @@ function Signup() {
     }
 });
 
-const handlePass = () => {
+  const handlePass = () => {
   if (passIcon === "password") {
     setPassIcon("text");
   }else{
     setPassIcon("password")
   }
  }
-
   // const { errors } = formState || {};
 
   return (
@@ -89,15 +88,14 @@ const handlePass = () => {
 
           <p className="mt-3 text-xl text-center text-gray-600 dark:text-gray-200">Welcome back!</p>
 
-          <a href="#" className="flex items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+          <button className="flex w-full items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
             <div className="px-4 py-2">
               <FcGoogle size={30} />
             </div>
-
             <span className="w-5/6 px-4 py-3 font-bold text-center">
               Sign up with Google
             </span>
-          </a>
+          </button>
 
           <div className="flex items-center justify-between mt-4">
             <span className="w-1/5 border-b dark:border-gray-600 lg:w-1/4"></span>
