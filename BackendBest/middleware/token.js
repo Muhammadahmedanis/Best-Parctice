@@ -7,14 +7,14 @@ const { sign, verify } = jwt;
 
 export const generateToken = ({data, res}) => {
     const token = sign({ 
-        ...data, data_id: undefined 
+        data, 
     }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
-    res.cookie("token", token, {
-        httpOnly: true, // Cookie cannot be accessed by client-side scripts
-        secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-        sameSite: "strict", // Prevent cross-site request forgery (CSRF)
-        maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds  this is cookies expires and automatically logout hojaifa cookies nahi hogi
-    });
+    // res.cookie("token", token, {
+    //     httpOnly: true, // Cookie cannot be accessed by client-side scripts
+    //     secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+    //     sameSite: "strict", // Prevent cross-site request forgery (CSRF)
+    //     maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds  this is cookies expires and automatically logout hojaifa cookies nahi hogi
+    // });
     return token;
 }
 

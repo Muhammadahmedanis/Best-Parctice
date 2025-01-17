@@ -1,17 +1,21 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify';
 
 function Forgotpass() {
     const[email, setEmail] = useState('');
+    const[isPending, setIspending] = useState(false);
     const haldleForgotPass = async() => {
         try {
+            setIspending(true);
             await axios.post("/api/v1/auth/forgotPass", { email });
             toast.success("Email sent Successful");
+            setEmail(" ");   
         } catch (error) {
             toast.error(error.response?.data.message);
         }
+        setIspending(false);
     }
   return (
     <div className='flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900'>
@@ -36,10 +40,10 @@ function Forgotpass() {
                                     <input
                                         onChange={(e) => setEmail(e.target.value)}
                                         type="email"
+                                        value={email}
                                         id="email"
                                         name="email"
                                         className="block w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        aria-describedby="confirm-new-password-error"
                                         placeholder="Confirm your email address"
                                     />
                                 </div>
@@ -52,6 +56,7 @@ function Forgotpass() {
                                 type="submit"
                                 className="inline-flex items-center justify-center gap-2 px-4 py-3 text-[15px] font-bold text-white transition-all bg-indigo-500 border border-transparent rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                 Reset Password
+                                { isPending && <div className="w-7 h-7 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> }
                             </button>
                             <button
                                 className="inline-flex items-center border-gray-200 justify-center gap-2 px-4 py-3 text-sm font-bold text-gray-700 transition-all  border-2 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
