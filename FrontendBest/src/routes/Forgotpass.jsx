@@ -9,7 +9,7 @@ function Forgotpass() {
     const haldleForgotPass = async() => {
         try {
             setIspending(true);
-            await axios.post("/api/v1/auth/forgotPass", { email });
+            await axios.post("/api/v1/user/forgot-password", { email });
             toast.success("Email sent Successful");
             setEmail(" ");   
         } catch (error) {

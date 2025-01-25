@@ -5,23 +5,23 @@ import { LuEye } from 'react-icons/lu';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-
 const ResetPassword = () => {
+    const { token } = useParams();
     const [passIcon, setPassIcon] = useState("password");
     const param = useParams();
-    const token = param["token"]
+    // const token = param["token"]
     const [user, submitAction, isPending] = useActionState(async (previousState, formData) => {
+        const oldPassword = formData.get("oldPassword");
         const newPassword = formData.get("newPassword");
-        const confirmNewPassword = formData.get("confirmNewPassword");
-        if (!newPassword || !confirmNewPassword) {
+        if (!oldPassword || !newPassword) {
             return toast.error("Password is required")
         }
-        if (newPassword !== confirmNewPassword) {
+        if (newPassword !== newPassword) {
             return toast.error("Password donot match");
         }
 
         try {
-            await axios.post(`/api/v1/auth/resetPass/${token}`, { newPassword, confirmNewPassword })
+            await axios.post(`/api/v1/user/change-password/${token}`, { oldPassword, newPassword })
             toast.success("Password reset successful");
         } catch (error) {
             toast.error(error.response?.data.message);
@@ -52,7 +52,7 @@ const ResetPassword = () => {
                                 <div className="grid gap-y-4">
                                     <div>
                                         <label htmlFor="new_password" className="block mb-2 ml-1 text-[17px] font-semibold">
-                                            New password
+                                            Old password
                                         </label>
                                         <div className="relative flex items-center mt-2">
                                             <span onClick={handlePass} className="absolute right-1">
@@ -60,8 +60,8 @@ const ResetPassword = () => {
                                             </span>
                                             <input
                                                 type={passIcon === "password" ? "password" : "text"}
-                                                id="new_password"
-                                                name="newPassword"
+                                                id="old_password"
+                                                name="oldPassword"
                                                 className="block w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                                 required
                                                 aria-describedby="new-password-error"
@@ -74,7 +74,7 @@ const ResetPassword = () => {
                                     </div>
                                     <div>
                                         <label htmlFor="confirm_new_password" className="block mb-2 ml-1 text-[17px] font-semibold">
-                                            Confirm new password
+                                            New password
                                         </label>
                                         <div className="relative flex items-center mt-2">
                                             <span onClick={handlePass} className="absolute right-1">
@@ -83,7 +83,7 @@ const ResetPassword = () => {
                                             <input
                                                 type={passIcon === "password" ? "password" : "text"}
                                                 id="confirm_new_password"
-                                                name="confirmNewPassword"
+                                                name="newPassword"
                                                 className="block w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                                 required
                                                 aria-describedby="confirm-new-password-error"

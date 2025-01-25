@@ -8,10 +8,17 @@ import useTheme from "../context/themeContext";
 import { MdOutlineDashboard } from "react-icons/md";
 import { toast } from 'react-toastify';
 import { FaBars, FaTimes } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/userSlice.js";
+import axios from "axios";
 
 function Nvabar() {
   const [openModal, setOpenModal] = useState(false);
-  const { user, dispatch  } = use(AuthContext);  
+  // const { user, dispatch  } = use(AuthContext);  
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  console.log(user);
+  
   const {theme, lightThemeMode, darkThemeMode } = useTheme()
   const navItems = [
     {
@@ -48,11 +55,13 @@ function Nvabar() {
 
   const handleLogout = async () => {
     try {
-        await axios?.post("/api/v1/auth/logout");
-        toast.success("Logout successful");
-        dispatch({type: "AUTH_LOGOUT"})
+      const response = await axios.post("/api/v1/user/logout");
+        dispatch(logout());
+        toast.success(response.data.message);
+        // dispatch({type: "AUTH_LOGOUT"})
     } catch (error) {
-        dispatch({type: "AUTH_LOGOUT", payload: error.response?.data.message})
+      dispatch(logout());
+        // dispatch({type: "AUTH_LOGOUT", payload: error.response?.data.message})
         toast.error(error.response?.data.message)
     }
   }

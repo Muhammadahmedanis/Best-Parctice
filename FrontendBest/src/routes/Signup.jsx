@@ -10,13 +10,15 @@ import { AuthContext } from '../context/authContext';
 import Input from '../components/Input';
 import Label from '../components/Label';
 import { getData } from './Otp.jsx';
+import { useDispatch } from 'react-redux';
+import { signupSuccess, signupFailed }  from '../redux/userSlice.js' ;
 
 function Signup() {
-  const navigate = useNavigate();
-  const { dispatch } = use(AuthContext)
+  // const { dispatch } = use(AuthContext)
+  const dispatch = useDispatch();
   const[passIcon, setPassIcon] = useState("password");
+  const navigate = useNavigate();
   const [formState, submitAction, isPending] = useActionState(async (previousState, formData) => {
-    // const errors = {};
     const userName = formData.get("userName");
     const email = formData.get("email");
     const password = formData.get("password");
@@ -33,33 +35,36 @@ function Signup() {
     } else if (password.length < 7) {
       toast.error("Password must be at least 8 characters")
     }
-
-    // If there are errors, return them to prevent form reset
-    // if (Object.keys(errors).length > 0) {
-    //   return { ...previousState, errors };
-    // }
-
+    
     // API Call
-  const data = { userName, email, password };
-  if (data.userName.length && data.email.length && data.password.length) {
-    try {
-        const response = await axios.post("/api/v1/auth/signup", data);
-        localStorage.setItem("token", JSON.stringify(response.data.token))
-        const userInfo = {user: userName ,admin: response?.data.data?.isAdmin};
+    const data = { userName, email, password };
+    if (data.userName.length && data.email.length && data.password.length) {
+      try {
+        const response = await axios.post("/api/v1/user/signup", data);
+        console.log(response?.data.data.user);
+        // localStorage.setItem("token", JSON.stringify(response.data.token))
+        const userInfo = {user: userName, admin: response?.data.data.user?.isAdmin}
+        dispatch(signupSuccess(userInfo))
         getData({email:  response?.data.data?.email, _id:  response?.data.data?._id});
-        dispatch({type: "AUTH_SUCCESS", payload: userInfo});
+        // dispatch({type: "AUTH_SUCCESS", payload: userInfo});
         console.log(userInfo);
         toast.success(response.data.message);
         navigate("/otp")
-        // return { ...previousState, errors: null }; // Clear errors on success
       } catch (error) {
+        dispatch(signupFailed(error))
         toast.error(error.response?.data.message);
-        dispatch({type: "AUTH_FAIL", payload: error.response?.data.message})
-        // return { ...previousState, errors: error.message };
+        // dispatch({type: "AUTH_FAIL", payload: error.response?.data.message})
       }
     }
-});
-
+  });
+  
+  
+      // If there are errors, return them to prevent form reset
+      // if (Object.keys(errors).length > 0) {
+      //   return { ...previousState, errors };
+      // }
+  // return { ...previousState, errors: null }; // Clear errors on success
+  // return { ...previousState, errors: error.message };
   const handlePass = () => {
   if (passIcon === "password") {
     setPassIcon("text");
@@ -88,22 +93,22 @@ function Signup() {
 
           <p className="mt-3 text-xl text-center text-gray-600 dark:text-gray-200">Welcome back!</p>
 
-          <button className="flex w-full items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+          {/* <button className="flex w-full items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
             <div className="px-4 py-2">
               <FcGoogle size={30} />
             </div>
             <span className="w-5/6 px-4 py-3 font-bold text-center">
               Sign up with Google
             </span>
-          </button>
+          </button> */}
 
-          <div className="flex items-center justify-between mt-4">
+          {/* <div className="flex items-center justify-between mt-4">
             <span className="w-1/5 border-b dark:border-gray-600 lg:w-1/4"></span>
             <a href="#" className="text-xs text-center text-gray-500 uppercase dark:text-gray-400 hover:underline">
               or login with email
             </a>
             <span className="w-1/5 border-b dark:border-gray-400 lg:w-1/4"></span>
-          </div>
+          </div> */}
 
           <form action={submitAction}>
             <div className='my-4'>

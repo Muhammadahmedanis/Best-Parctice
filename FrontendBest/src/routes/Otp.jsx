@@ -4,26 +4,23 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 export const getData = (data) => {
+  console.log(data);
   return data;
 };
  
 const Otp = () => {
   const navigate = useNavigate()
-  let token = JSON.parse(localStorage.getItem("token"));
+  // let token = JSON.parse(localStorage.getItem("token"));
   const [otpNum, setOtpNum] = useState(["", "", "", "", "", ""]);
   const[disable, setDisable] = useState(false);
 
   const [user, submitAction, isPending] = useActionState(async (previousState, formData) => {
     try {
       const otp = otpNum.join('');
-      const res = await axios.post("/api/v1/auth/verifyEmail", { otp }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.post("/api/v1/user/verify-email", { otp });
       console.log(res.data);
       toast.success(res.data.message);
-      navigate("/signin");
+      navigate("/");
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
@@ -46,9 +43,16 @@ const Otp = () => {
 
 const handleNewOtp = async () => {
   try {
+    console.log("OK");
+    console.log(response?.data?.data?.email);
+    
+    console.log(getData({ email: response?.data?.data?.email, _id: response?.data?.data?._id }));
+    
     const result = getData({ email: response?.data?.data?.email, _id: response?.data?.data?._id });    
+    console.log(result, "data");
+    
     const { email, _id } = result;
-    const response = await axios.post("/api/v1/auth/resendOtp", {email, _id})
+    const response = await axios.post("/api/v1/user/resend-otp", {email, _id})
     toast.success(response.data.message)
   } catch (error) {
     toast.error(error.response?.data.message)
@@ -102,7 +106,7 @@ const handleKeyDown = (e, index) => {
       </form>
       <div className="text-sm text-slate-500 mt-4">
         Didn't receive code?{' '}
-        <button onClick={handleNewOtp} className="font-medium text-indigo-500 hover:text-indigo-600" href="#0"> Resend </button>
+        <button onClick={handleNewOtp} className="font-medium text-indigo-500 hover:text-indigo-600"> Resend </button>
       </div>
     </div>
     </div>

@@ -13,10 +13,13 @@ import NotFound from './routes/NotFound'
 import { AuthContext } from './context/authContext'
 import { use } from 'react';
 import Dashboard from './components/Dashboard'
+import { useSelector } from 'react-redux'
 
 
 function App() {
-    const { user } = use(AuthContext);
+  // const { user } = use(AuthContext);
+    const { user } =  useSelector((state) => state.auth)
+    console.log(user?.user);
     const isExist = user?.user;
     const isAdmin = user?.admin;
     console.log("user:- ",isExist);
@@ -28,7 +31,7 @@ function App() {
           <Route path='/otp' element={ <Otp />} />
           <Route path='/signin' element={ !isExist ?  <Signin /> : <Navigate to="/" /> } />
           <Route path='/forgotpass' element={ <Forgotpass /> } />
-          <Route path='/resetPass/:token' element={ <ResetPassword /> } />
+          <Route path='/change-password/:token' element={ <ResetPassword /> } />
           <Route path='*' element={<NotFound />} />
   
           <Route path='/' element={ isExist ?  <Layout />  : <Navigate to="/signin" />}>

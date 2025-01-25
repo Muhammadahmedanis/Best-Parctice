@@ -8,37 +8,42 @@ import axios from 'axios';
 import { AuthContext } from '../context/authContext';
 import Input from '../components/Input';
 import Label from '../components/Label';
+import { useDispatch } from 'react-redux';
+import { signinSuccess, signinFailed } from '../redux/userSlice.js' 
 
 function Signin() {
-  const navigate = useNavigate();
-  const { dispatch } = use(AuthContext);
   const[passIcon, setPassIcon] = useState("password");
-   const[user, submitAction, isPending] = useActionState(async (previousState, formData) => {
-    const email = formData.get("email");
-    const password = formData.get("password");
-    
-    if(!email) {
-       toast.error("email required")
-    }else if(!/\S+@\S+\.\S+/.test(email)){
-      toast.error("Invalid email format")
-    }
-    if (!password) {
-      toast.error("Password is required")
-    } else if (password.length < 7) {
-      toast.error("Password must be at least 8 characters")
-    }
+  const navigate = useNavigate();
+  // const { dispatch } = use(AuthContext);
+  const dispatch = useDispatch();
+  
+  const[user, submitAction, isPending] = useActionState(async (previousState, formData) => {
+  const email = formData.get("email");
+  const password = formData.get("password");
+  
+  // Field Validations
+  if (!email) toast.error("Email is required");
+  else if (!/\S+@\S+\.\S+/.test(email)) toast.error("Invalid email format");
+  if (!password) toast.error("Password is required");
+  else if (password.length < 7) toast.error("Password must be at least 8 characters");
+
     const userData = { email, password };
     if (userData.email.length && userData.password.length) {
       try {
-        const response = await axios.post("/api/v1/auth/signin", userData);
+        const response = await axios.post("/api/v1/user/signin", userData);
+        
         toast.success(response.data.message);
         const name = email.match(/^[a-zA-Z]+/)[0];
-        localStorage.setItem("token", JSON.stringify(response.data.token))
-        const userInfo = {user: name, admin: response?.data.data?.isAdmin}
-        dispatch({type: "AUTH_SUCCESS", payload: userInfo})
+        
+        // localStorage.setItem("token", JSON.stringify(response.data.token))
+        const userInfo = {user: name, admin: response?.data.data.user?.isAdmin}
+        console.log(userInfo);
+        dispatch(signinSuccess(userInfo));
+        // dispatch({type: "AUTH_SUCCESS", payload: userInfo})
         navigate("/");
       } catch (error) {
-        dispatch({type: "AUTH_FAIL", payload: error.response?.data.message});
+        dispatch(signinFailed(error));
+        // dispatch({type: "AUTH_FAIL", payload: error.response?.data.message});
         toast.error(error.response?.data.message);
       }
     }
