@@ -4,46 +4,50 @@ import Footer from "../components/Footer.jsx";
 import { useEffect, useState } from "react";
 import { ThemeContextProvider } from "../context/themeContext.jsx";
 import Loader from "../components/loader/Loader.jsx";
+import { useSelector } from "react-redux";
 
 const Layout = () => {
+  const theme = useSelector(state => state.theme.theme)
+  
   const[isloading, setIsLoading] = useState(true)
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false)
-    }, 1500)
+    }, 1000)
 
     return () => {
       clearTimeout(timer);
     }
   }, [])
 
-  const[theme, setTheme] = useState(() => {
-    return JSON.parse(localStorage.getItem("theme")) || "light"
-  });
-   
-  const lightThemeMode = () => {
-    setTheme("light");
-  }
-  const darkThemeMode = () => {
-    setTheme("dark")
-  }
 
-  useEffect(() => {
-    localStorage.setItem("theme", JSON.stringify(theme));
-    setTheme(theme)
-  }, [theme])
+
+  // const[theme, setTheme] = useState(() => {
+  //   return JSON.parse(localStorage.getItem("theme")) || "light"
+  // });
+   
+  // const lightThemeMode = () => {
+  //   setTheme("light");
+  // }
+  // const darkThemeMode = () => {
+  //   setTheme("dark")
+  // }
+
+  // useEffect(() => {
+  //   localStorage.setItem("theme", JSON.stringify(theme));
+  //   setTheme(theme)
+  // }, [theme])
 
   return (
     isloading ? ( <Loader /> ) : 
     ( 
-      <ThemeContextProvider value={{theme, lightThemeMode, darkThemeMode}}>
+      // <ThemeContextProvider value={{theme, lightThemeMode, darkThemeMode}}>
         <div className={`${theme}`}>
           <Nvabar />
             <Outlet />
           <Footer />
         </div>
-      </ThemeContextProvider>
+      // </ThemeContextProvider>
     )
   );
 };

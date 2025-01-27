@@ -49,20 +49,9 @@ const AuthSlice = createSlice({
     },
 });
 
-const { reducer, actions } = AuthSlice;
+export const { signinPending, signinSuccess, signinFailed, signupPending, signupSuccess, signupFailed, logout} = AuthSlice.actions;
 
-export const {
-    signinPending,
-    signinSuccess,
-    signinFailed,
-    signupPending,
-    signupSuccess,
-    signupFailed,
-    logout,
-} = actions;
-
-export default reducer;
-
+export default AuthSlice.reducer;
 
 
 

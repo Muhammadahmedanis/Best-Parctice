@@ -45,6 +45,7 @@ function Signin() {
         dispatch(signinFailed(error));
         // dispatch({type: "AUTH_FAIL", payload: error.response?.data.message});
         toast.error(error.response?.data.message);
+        <Link to="/signup" />
       }
     }
    }) 
@@ -99,11 +100,10 @@ function Signin() {
               <Input type={passIcon === "password" ? "password" : "text" } name="password" placeholder="••••••••" />
             </div>
           </div>
-
           <div className="mt-6">
-            <button disabled={isPending} className="w-full inline-flex gap-2 items-center justify-center whitespace-nowrap rounded-lg bg-indigo-500 hover:bg-indigo-600 px-3.5 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-950/10  focus:outline-none focus:ring focus:ring-indigo-300 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300 transition-colors duration-150">
-              <div className='text-[17px]'> Sign In</div>
-              { isPending && <div className="w-7 h-7 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> }
+            <button disabled={isPending} className="w-full inline-flex justify-center whitespace-nowrap rounded-lg bg-indigo-500 hover:bg-indigo-600 px-3.5 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-950/10  focus:outline-none focus:ring focus:ring-indigo-300 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300 transition-colors duration-150">
+              { isPending ? <div className="w-7 h-7 border-4  border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> : <div className='text-[17px]'> Sign In</div>
+ }
             </button>
           </div>
           </form>

@@ -44,6 +44,7 @@ export const signup = asyncHandler( async (req, res) => {
     if ([userName, email, password].some((field) => typeof field !== "string" || field.trim() === "")) {
         throw new ApiError(StatusCodes.BAD_REQUEST, MISSING_FIELDS);
     }
+    console.log(userName, email);
     
     // Check if the user already exists
     const isUserExist = await User.findOne({ $or: [{ userName }, { email }] });
@@ -54,7 +55,8 @@ export const signup = asyncHandler( async (req, res) => {
     // Generate OTP
     const otp = uuidv4().slice(0, 6);
     const otpExpiry = Date.now() + 600000; // OTP expires in 10 minutes
-    
+    console.log(otp);
+        
     // Create the user
     const user = await User.create({
         userName: userName.toLowerCase(),
@@ -206,21 +208,18 @@ export const signin = asyncHandler(async (req, res) => {
     if(!email || !password){
         throw new ApiError(StatusCodes.BAD_REQUEST, MISSING_FIELD_EMAIL_PASSWORD);
     }
-
+    
     const user = await User.findOne({email});
     
     if(!user){
-        throw new ApiError(StatusCodes.NOT_FOUND, NO_USER)
+        throw new ApiError(StatusCodes.NOT_FOUND, NO_USER);
     }
     
     const isPaswordValid = await user.isPasswordCorrect(password);
-    
-    if(!isPaswordValid){
+    if (!isPaswordValid) {
         throw new ApiError(StatusCodes.UNAUTHORIZED, UN_AUTHORIZED);
-    }
-
-    
-
+      }
+      
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
     
     console.log("ok");
@@ -251,7 +250,7 @@ export const signin = asyncHandler(async (req, res) => {
 export const logout = asyncHandler(async (req, res) => {
     
     await User.findByIdAndUpdate(req.user._id, {
-        $set: { refreshToken: undefined } 
+        $unset: { refreshToken: 1 } // remove field from document 
     }, { new: true });
 
     const options = {
@@ -380,7 +379,7 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
 //     if(!avatarLcalePth){
 //         throw new ApiError(StatusCodes.BAD_REQUEST, "Avatar is missing")
 //     }
-
+        // delete old avatar 
 //     const avatar = await uploadOnCloddibary(avatarLcalePth);
 //     if(!avatar){
 //         throw new ApiError(StatusCodes.BAD_REQUEST, "Errir uplading while uploading")

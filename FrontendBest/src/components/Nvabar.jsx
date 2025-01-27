@@ -11,15 +11,16 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/userSlice.js";
 import axios from "axios";
+import { toggleTheme } from "../redux/themeSlice.js"; 
 
 function Nvabar() {
   const [openModal, setOpenModal] = useState(false);
   // const { user, dispatch  } = use(AuthContext);  
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  console.log(user);
+  const theme = useSelector((state) => state.theme.theme);
   
-  const {theme, lightThemeMode, darkThemeMode } = useTheme()
+  // const {theme, lightThemeMode, darkThemeMode } = useTheme()
   const navItems = [
     {
       name: "Home",
@@ -45,13 +46,15 @@ function Nvabar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleTheme = () => {
-    if(theme === "light") {
-      darkThemeMode();
-      console.log(theme);
-    }else {
-      lightThemeMode();
-    }
-  }  
+    dispatch(toggleTheme())
+  } 
+  
+    // if(theme === "light") {
+    // //   darkThemeMode();
+    //   console.log(theme);
+    // }else {
+    //   // lightThemeMode();
+    // }
 
   const handleLogout = async () => {
     try {
@@ -118,8 +121,8 @@ function Nvabar() {
           <div className={` ${openModal ? "block" : "hidden"} absolute right-1  top-14 z-10 mt-1 w-[132px] origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none`}>
           <button onClick={handleTheme}
             className="flex items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700">
-            Theme
-            { theme === "light" ?  <IoSunnyOutline className="font-bold w-12" size={23} /> : <IoSunny size={23}/> }      
+           {theme}
+            { theme == "light" ? <IoSunnyOutline className="font-bold w-12" size={23} />  :  <IoSunny className="font-bold w-12" size={23}/> }      
           </button>
           <button onClick={handleLogout}
             className="flex items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700">

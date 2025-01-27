@@ -93,23 +93,6 @@ function Signup() {
 
           <p className="mt-3 text-xl text-center text-gray-600 dark:text-gray-200">Welcome back!</p>
 
-          {/* <button className="flex w-full items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg dark:border-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-            <div className="px-4 py-2">
-              <FcGoogle size={30} />
-            </div>
-            <span className="w-5/6 px-4 py-3 font-bold text-center">
-              Sign up with Google
-            </span>
-          </button> */}
-
-          {/* <div className="flex items-center justify-between mt-4">
-            <span className="w-1/5 border-b dark:border-gray-600 lg:w-1/4"></span>
-            <a href="#" className="text-xs text-center text-gray-500 uppercase dark:text-gray-400 hover:underline">
-              or login with email
-            </a>
-            <span className="w-1/5 border-b dark:border-gray-400 lg:w-1/4"></span>
-          </div> */}
-
           <form action={submitAction}>
             <div className='my-4'>
             <Label htmlFor="LoggingUsername" labelName="Username" />
@@ -146,9 +129,8 @@ function Signup() {
             <button
             disabled={isPending}
               type='submit'
-              className="mt-6 w-full inline-flex gap-2 items-center justify-center whitespace-nowrap rounded-lg bg-indigo-500 hover:bg-indigo-600 px-3.5 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-950/10  focus:outline-none focus:ring focus:ring-indigo-300 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300 transition-colors duration-150">
-                <div className='text-[17px]'> Sign Up </div>
-              { isPending && <div className="w-6 h-6 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> }   
+              className="mt-6 w-full inline-flex justify-center whitespace-nowrap rounded-lg bg-indigo-500 hover:bg-indigo-600 px-3.5 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-950/10  focus:outline-none focus:ring focus:ring-indigo-300 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300 transition-colors duration-150">
+               { isPending ? <div className="w-7 h-7 border-4  border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> : <div className='text-[17px]'> Sign Up</div>} 
             </button>
           </form>
 

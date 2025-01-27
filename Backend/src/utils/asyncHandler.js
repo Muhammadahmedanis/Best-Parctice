@@ -1,8 +1,9 @@
+import { StatusCodes } from "http-status-codes";
+
 export const asyncHandler = (requestHandler) => async(req, res, next) => {
     try {
-        return await requestHandler(req, res, next);
-        // res.status().send();
+        await requestHandler(req, res, next);
     } catch (error) {
-        // res.status().send();
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({status: false, message: error.message});
     }
 }
