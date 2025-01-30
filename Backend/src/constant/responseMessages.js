@@ -1,8 +1,7 @@
 export const responseMessages = {
     ADD_SUCCESS_MESSAGES: 'resource added successfully',
     ADD_UNSUCCESS_MESSAGES: 'data already available in DB',
-    ADMIN_ACCESS: 'Admin has access to this page',
-
+    ADMIN_ACCESS: 'Only Admin have access',
 
     DELETED_SUCCESS_MESSAGES: 'resource deleted successfully',
     DELETED_UNSUCCESS_MESSAGES: 'resource cannot be deleted',
@@ -30,7 +29,7 @@ export const responseMessages = {
     
     NO_USER_FOUND: "Email doesn't exists",
     NO_USER: 'No User found',
-    
+    NO_DATA_FOUND: "No data provided",    
     
     OTP_EXPIRED: 'OTP has expired. Please request a new OTP',
     TOKEN_EXPIRED: 'Refresh token is expired or used',

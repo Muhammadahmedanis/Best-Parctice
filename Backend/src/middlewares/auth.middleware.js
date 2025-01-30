@@ -4,12 +4,12 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 import { responseMessages } from "../constant/responseMessages.js";
 import { User } from "../models/user.model.js";
-const { UNAUTHORIZED_REQUEST, INVALID_TOKEN } = responseMessages
+const { UNAUTHORIZED_REQUEST, INVALID_TOKEN, ADMIN_ACCESS} = responseMessages
 
 export const verifyJwt = asyncHandler(async (req, _, next) => {
     
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
-    console.log(token);
+    // console.log(token);
     
     if (!token) {
         throw new ApiError(StatusCodes.UNAUTHORIZED, UNAUTHORIZED_REQUEST);
@@ -26,3 +26,13 @@ export const verifyJwt = asyncHandler(async (req, _, next) => {
     
     next();
 });
+
+
+export const verifyAdmin = asyncHandler(async (req, res, next) => {
+    verifyJwt(req, res, next, () => {
+        if (!req.user?.isAdmin) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, ADMIN_ACCESS);
+        }
+        next();
+    })
+})

@@ -1,16 +1,11 @@
-// userRouter.route("/signup").post( upload.fields([ {name: "avatar", maxContent: 1}, {name: "coverImage", maxConetnt: 1} ]) signup);
 import { Router } from "express";
-import { changeCurrentPassword, forgotPassword, logout, refreshAccessToken, resendOtp, signin, signup, verifyEmail } from "../controllers/user.controller.js";
-import { verifyJwt } from "../middlewares/auth.middleware.js";
+import { verifyAdmin } from "../middlewares/auth.middleware.js";
+import { deleteUser, getAlluser } from "../controllers/user.controller.js";
+import { createRateLimiter } from "../middlewares/rate-limitting.middleware.js";
 
 const userRouter = Router();
-userRouter.route("/signup").post(signup);
-userRouter.route("/signin").post(signin);
-userRouter.route("/logout").post(verifyJwt, logout);
-userRouter.route("/verify-email").post(verifyJwt, verifyEmail)
-userRouter.route("/resend-otp").post(resendOtp);
-userRouter.route("/forgot-password").post(forgotPassword);
-userRouter.route("/change-password/:token").post(changeCurrentPassword)
-userRouter.route("/refresh-token").post(refreshAccessToken);
+userRouter.route("/").get(verifyAdmin, createRateLimiter(5 * 60 * 1000, 20, "Too much fetch user request hit, please try again after five minute"), getAlluser);
+userRouter.route("/delete/:userId").delete(verifyAdmin, deleteUser);
+userRouter.route("/update/:userId").put(verifyAdmin);
 
 export default userRouter;
