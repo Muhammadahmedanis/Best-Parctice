@@ -4,7 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { responseMessages } from "../constant/responseMessages.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-// import { redis } from "../redis/redis.js";
+import { redis } from "../redis/redis.js";
 const { NO_USER, GET_SUCCESS_MESSAGES, UPDATE_SUCCESS_MESSAGES, DELETED_SUCCESS_MESSAGES, UPDATE_UNSUCCESS_MESSAGES, NO_DATA_FOUND } = responseMessages
 
 
@@ -16,22 +16,28 @@ const { NO_USER, GET_SUCCESS_MESSAGES, UPDATE_SUCCESS_MESSAGES, DELETED_SUCCESS_
 // @access  Admin
 
 export const getAlluser = asyncHandler(async (_, res) => {
-    const rediDataWithOutParse = await redis.get("users");
-    const redisData = JSON.parse(rediDataWithOutParse);
-    console.log(redisData);
-    if(redisData){
+    const redisDataRaw = await redis.get("users");
+    // console.log("📦 Raw Redis Data:", redisData);
+
+    if (redisDataRaw) {
+        const redisData = JSON.parse(redisDataRaw);
+        console.log("✅ Redis Data Parsed:", redisData);
         return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, GET_SUCCESS_MESSAGES, redisData));
     }
+
+    console.log("❌ No data in Redis, fetching from DB...");
+    const getUser = await User.find();
     
-    const getUser  = await User.find();
-    if(!getUser){
-        throw new ApiError(StatusCodes.BAD_REQUEST, NO_USER)
+    if (!getUser) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, NO_USER);
     }
 
-    redis.set("users", JSON.stringify(getUser));
-    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, GET_SUCCESS_MESSAGES, getUser));
+    console.log("✅ Users fetched from DB, storing in Redis...");
+    redis.set("users", JSON.stringify(getUser), "EX", 60 * 10); // Cache for 5 minutes
 
-})
+    return res.status(StatusCodes.OK).send(new ApiResponse(StatusCodes.OK, GET_SUCCESS_MESSAGES, getUser));
+});
+
 
 
 
@@ -41,7 +47,7 @@ export const getAlluser = asyncHandler(async (_, res) => {
 
 export const updateUser = asyncHandler(async (req, res) => {
     const { userId } = req.params;
-    if(!user){
+    if(!userId){
         return new ApiError(StatusCodes.BAD_REQUEST, UPDATE_SUCCESS_MESSAGES);
     };
 

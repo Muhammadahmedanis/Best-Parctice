@@ -11,7 +11,8 @@ const formatDate = (dateString) => {
 
 function Table() {
   const[users, setUser] = useState([]);
-  const[isEdit, setIsEdit] = useState(false);
+  const[isEdit, setIsEdit] = useState(null);
+  const[isChanges, setIsChanges] = useState({});
 
   const getAllUser = async () => {
     try {
@@ -34,15 +35,36 @@ function Table() {
   }
   
   const handleUpdate = async (e) => {
-    setIsEdit(!isEdit);
-    const userId = e.currentTarget.id
-    // try {
-      //   const response = await axiosInstance.put("user/update/userId");
-      //   toast.success(response.data.data);
-    // } catch (error) {
-    //   toast.error(error.response?.data.message);
-    // }
+    const userId = e.currentTarget.id;
+    
+    if(userId === isEdit){
+      setIsEdit(!isEdit);
+      console.log({userName:isChanges[userId]});
+      try {
+          const response = await axiosInstance.put(`user/update/${userId}`, {userName:isChanges[userId]});
+          toast.success(response.data.message);
+          getAllUser();
+        } catch (error) {
+          toast.error(error.response?.data.message);
+      }
+    }else{
+      setIsEdit(userId);
+      // setIsChanges((prev) => ({
+      //   ...prev, 
+      //   [userId]: isChanges[userId] || "",
+      // }))
+    }
+    
   }
+
+  const handleEdit = (user) => {
+    setIsEdit(user._id); // Set user in edit mode
+    setIsChanges((prev) => ({
+      ...prev,
+      [user._id]: user.userName, // Store the existing username to prevent empty field
+    }));
+  };
+  
 
 
   useEffect(() => {
@@ -70,7 +92,7 @@ function Table() {
                       {users.map((user, ind) => (
                         <tr key={ind} className='hover-bg-gray-50 text-sm text-gray-900 dark:text-white'>
                           <td className='px-6 py-4'>{user._id}</td>
-                          <td className='px-6 py-4 font-semibold'>{user.userName.toUpperCase()}</td>
+                          <td className='px-6 py-4 font-semibold'>{ isEdit === user._id ? <input type="text" className='border rounded p-1 text-center' value={isChanges[user._id] ?? user.userName} onChange={(e) => setIsChanges((prev) => ({...prev, [user._id]:e.target.value }))} /> : <span onClick={handleEdit}>{user.userName}</span> }</td>
                           <td className='px-6 py-4'>{formatDate(user.createdAt)}</td>
                           <td className='px-6 py-4 flex justify-center'>
                             <span className={`px-3 py-1 w-24 rounded-full text-xs ${user.isVerified ? 'bg-green-200 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
@@ -81,8 +103,8 @@ function Table() {
                             <button onClick={handleDelete}  id={user._id} className='cursor-pointer'>
                               <MdOutlineDeleteOutline size={25} />
                             </button>
-                            <button onClick={handleUpdate} className='cursor-pointer'>
-                              { isEdit ? <MdPublishedWithChanges size={25} /> : <TbEdit size={25} />}
+                            <button onClick={handleUpdate} id={user._id} className='cursor-pointer'>
+                              { isEdit == user._id ? <MdPublishedWithChanges size={25} /> : <TbEdit size={25} />}
                             </button>
                           </td>
                         </tr>

@@ -36,4 +36,7 @@ app.all("*", (req, res) => {
   });
 });
 
+// Start the cron job
+// job.start()
+
 export { app };
